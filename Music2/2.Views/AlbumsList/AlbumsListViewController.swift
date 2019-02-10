@@ -10,13 +10,16 @@ import UIKit
 import RxSwift
 import RxCocoa
 import RxFeedback
+import RxDataSources
 import RxOptional
+import Reusable
 
 class AlbumsListViewController: UIViewController {
     typealias State = AlbumsListState
     typealias Command = AlbumsListCommand
     
     private lazy var tableView = UITableView()
+    private lazy var bottomIndicator = infiniteScrollingIndicator()
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -26,13 +29,11 @@ class AlbumsListViewController: UIViewController {
         
         let tableView = self.tableView
         
-        let configureCell: (UITableView, Int, Album) -> UITableViewCell = { tv, row, item in
-            let cell = tv.dequeueReusableCell(withIdentifier: "RepositoryCell") ??
-                UITableViewCell(style: .subtitle, reuseIdentifier: "RepositoryCell")
-            cell.textLabel?.text = item.title
-            cell.detailTextLabel?.text = item.artist.name
-            return cell
+        let configureCell: (Int, Album, AlbumCell) -> () = { _, item, cell in
+            cell.configure(withItem: item)
         }
+        
+        let displayError = { [unowned self] message in self.displayError(message: message) }
         
         let triggerLoadNextPage: (Driver<State>) -> Signal<Command> = { state in
             return state.flatMapLatest { state -> Signal<Command> in
@@ -43,17 +44,26 @@ class AlbumsListViewController: UIViewController {
             }
         }
         
+        let deselectItem: (IndexPath) -> () = { tableView.deselectRow(at: $0, animated: true) }
+        let openAlbum: (Album) -> () = { album in print("Open album: \(album)") }
+        
         let bindUI: (Driver<State>) -> Signal<Command> = bind(self) { (self, state) -> Bindings<Command> in
             let stateToUI = [
-                state.map { $0.albums }
-                    .distinctUntilChanged()
-                    .drive(tableView.rx.items)(configureCell),
-                state.map { $0.shouldDisplayError }
-                    .filterNil()
-                    .drive(onNext: { [unowned self] message in self.displayError(message: message) })
+                state.map { $0.albums }.distinctUntilChanged()
+                    .drive(tableView.rx.items(
+                        cellIdentifier: AlbumCell.reuseIdentifier,
+                        cellType: AlbumCell.self)
+                    )(configureCell),
+                state.map { $0.shouldDisplayError }.filterNil().drive(onNext: displayError),
+                state.map { $0.shouldLoadPage }.drive(self.bottomIndicator.rx.isAnimating),
+                state.map { $0.shouldOpenAlbum }.filterNil().drive(onNext: openAlbum)
             ]
             let uiToState = [
-                triggerLoadNextPage(state)
+                triggerLoadNextPage(state),
+                tableView.rx.itemSelected
+                    .do(onNext: deselectItem)
+                    .map { Command.didSelectItem(at: $0.row) }
+                    .asSignal(onErrorSignalWith: Signal.empty())
             ]
             return Bindings(subscriptions: stateToUI, mutations: uiToState)
         }
@@ -86,6 +96,11 @@ class AlbumsListViewController: UIViewController {
     }
     
     func configureViews() {
+        view.backgroundColor = Color.blackBackground.uiColor
+        tableView.backgroundColor = UIColor.clear
+        tableView.rowHeight = 90
+        tableView.register(cellType: AlbumCell.self)
+        tableView.tableFooterView = bottomIndicator
     }
     
     func displayError(message: String) {
@@ -96,4 +111,11 @@ class AlbumsListViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
+}
+
+func infiniteScrollingIndicator() -> UIActivityIndicatorView {
+    let i = UIActivityIndicatorView(style: .white)
+    i.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+    i.hidesWhenStopped = true
+    return i
 }

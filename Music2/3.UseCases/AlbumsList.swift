@@ -13,6 +13,7 @@ struct AlbumsListState: Transformable, Equatable {
     var albums: [Album]
     var shouldLoadPage: Bool
     var shouldDisplayError: String?
+    var shouldOpenAlbum: Album?
 }
 
 extension AlbumsListState {
@@ -27,13 +28,15 @@ extension AlbumsListState {
 enum AlbumsListCommand {
     case fetchMore
     case didFetchMore(NetworkingResult<[Album]>)
+    case didSelectItem(at: Int)
 }
 
 enum AlbumsList {
     static let initialState = AlbumsListState(
         albums: [],
         shouldLoadPage: true,
-        shouldDisplayError: nil
+        shouldDisplayError: nil,
+        shouldOpenAlbum: nil
     )
     
     static func reduce(state: AlbumsListState, command: AlbumsListCommand) -> AlbumsListState {
@@ -51,6 +54,9 @@ enum AlbumsList {
             case let .didFetchMore(.failure(error)):
                 newState.shouldLoadPage = false
                 newState.shouldDisplayError = error.localizedDescription
+                
+            case .didSelectItem(let i):
+                newState.shouldOpenAlbum = newState.albums[i]
             }
         }
     }

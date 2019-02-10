@@ -13,6 +13,11 @@ struct Album: Equatable, Codable {
     let title: String
     let artist: Artist
     let coverImageURL: URL?
+    
+    enum CodingKeys: String, CodingKey {
+        case id, title, artist
+        case coverImageURL = "coverImage"
+    }
 }
 
 struct Artist: Equatable, Codable {
