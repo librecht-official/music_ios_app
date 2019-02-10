@@ -29,6 +29,7 @@ PODS:
     - RxSwift (~> 4.0)
   - RxSwift (4.4.0):
     - RxAtomic (~> 4.4)
+  - SwiftGen (6.1.0)
 
 DEPENDENCIES:
   - Kingfisher (~> 4.0)
@@ -40,6 +41,7 @@ DEPENDENCIES:
   - RxFeedback
   - RxOptional
   - RxSwift
+  - SwiftGen (~> 6.0)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -55,6 +57,7 @@ SPEC REPOS:
     - RxFeedback
     - RxOptional
     - RxSwift
+    - SwiftGen
 
 SPEC CHECKSUMS:
   Alamofire: 3ec537f71edc9804815215393ae2b1a8ea33a844
@@ -69,7 +72,8 @@ SPEC CHECKSUMS:
   RxFeedback: 640e317bc7f6c4914c39a2063c6d5c0e6c1aa65d
   RxOptional: 80426a0ddbd092573e4c482d8cc13302078c4d5e
   RxSwift: 5976ecd04fc2fefd648827c23de5e11157faa973
+  SwiftGen: f872ca75cbd17bf7103c17f13dcfa0d9a15667b0
 
-PODFILE CHECKSUM: 1225a0a362f450e1908b9961744802818899a162
+PODFILE CHECKSUM: 403bf3436b6b5795a5cc2449a715a26965226743
 
 COCOAPODS: 1.5.3

@@ -9,6 +9,7 @@ def pods
     pod 'Moya/RxSwift'
     pod 'Reusable'
     pod 'Kingfisher', '~> 4.0'
+    pod 'SwiftGen', '~> 6.0'
 end
 
 target 'Music2' do

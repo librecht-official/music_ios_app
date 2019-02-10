@@ -45,7 +45,10 @@ class AlbumsListViewController: UIViewController {
         }
         
         let deselectItem: (IndexPath) -> () = { tableView.deselectRow(at: $0, animated: true) }
-        let openAlbum: (Album) -> () = { album in print("Open album: \(album)") }
+        let openAlbum: (Album) -> () = { [unowned self] album in
+            let vc = AlbumTracksViewController(album: album)
+            self.navigationController?.pushViewController(vc, animated: true)
+        }
         
         let bindUI: (Driver<State>) -> Signal<Command> = bind(self) { (self, state) -> Bindings<Command> in
             let stateToUI = [
@@ -89,10 +92,12 @@ class AlbumsListViewController: UIViewController {
     func prepareLayout() {
         view.addSubview(tableView)
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+        NSLayoutConstraint.activate([
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+        ])
     }
     
     func configureViews() {

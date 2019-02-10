@@ -17,7 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let window = UIWindow()
         self.window = window
-        let nc = UINavigationController(rootViewController: AlbumsListViewController())
+        let nc = NavigationController(rootViewController: AlbumsListViewController())
         window.rootViewController = nc
         window.makeKeyAndVisible()
         

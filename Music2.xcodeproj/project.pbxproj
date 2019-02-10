@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2F2E6ACB17F117000D31729B /* Pods_Music2Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FA81E1475820A4D3E6AB2FD7 /* Pods_Music2Tests.framework */; };
+		F53D25C722187772004BBD2B /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53D25C622187772004BBD2B /* NavigationController.swift */; };
 		F5D6319B220F02B4008AB5EE /* Albums.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D6319A220F02B4008AB5EE /* Albums.swift */; };
 		F5D6319E220F0472008AB5EE /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D6319D220F0472008AB5EE /* Environment.swift */; };
 		F5D631A0220F0FB3008AB5EE /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D6319F220F0FB3008AB5EE /* Logger.swift */; };
@@ -28,6 +29,12 @@
 		F5E16C7A21F4B5C300C8A732 /* Transformable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E16C7921F4B5C300C8A732 /* Transformable.swift */; };
 		F5F176D922103C2F004DC65A /* AlbumCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176D822103C2F004DC65A /* AlbumCell.swift */; };
 		F5F176DC22104542004DC65A /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176DB22104542004DC65A /* Color.swift */; };
+		F5F176DE22106599004DC65A /* AlbumTracksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176DD22106599004DC65A /* AlbumTracksViewController.swift */; };
+		F5F176E122106970004DC65A /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176E022106970004DC65A /* Font.swift */; };
+		F5F176E322108F87004DC65A /* AlbumTracks.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176E222108F87004DC65A /* AlbumTracks.swift */; };
+		F5F176E5221092FF004DC65A /* MusicTrackCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176E4221092FF004DC65A /* MusicTrackCell.swift */; };
+		F5F176E922109D59004DC65A /* Assets.auto.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176E822109D59004DC65A /* Assets.auto.swift */; };
+		F5F176EC2210A8D0004DC65A /* GradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176EB2210A8D0004DC65A /* GradientView.swift */; };
 		FB8C69A83877D9647DC832FD /* Pods_Music2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7B8376F330AA0B51D74D96 /* Pods_Music2.framework */; };
 /* End PBXBuildFile section */
 
@@ -47,6 +54,7 @@
 		B2D24787175BB08506EDB134 /* Pods-Music2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Music2.release.xcconfig"; path = "Pods/Target Support Files/Pods-Music2/Pods-Music2.release.xcconfig"; sourceTree = "<group>"; };
 		BE7B8376F330AA0B51D74D96 /* Pods_Music2.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Music2.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECC536FDE4FF65523E3433F2 /* Pods-Music2Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Music2Tests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Music2Tests/Pods-Music2Tests.debug.xcconfig"; sourceTree = "<group>"; };
+		F53D25C622187772004BBD2B /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		F5D6319A220F02B4008AB5EE /* Albums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Albums.swift; sourceTree = "<group>"; };
 		F5D6319D220F0472008AB5EE /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		F5D6319F220F0FB3008AB5EE /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -71,6 +79,12 @@
 		F5E16C7921F4B5C300C8A732 /* Transformable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transformable.swift; sourceTree = "<group>"; };
 		F5F176D822103C2F004DC65A /* AlbumCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCell.swift; sourceTree = "<group>"; };
 		F5F176DB22104542004DC65A /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
+		F5F176DD22106599004DC65A /* AlbumTracksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumTracksViewController.swift; sourceTree = "<group>"; };
+		F5F176E022106970004DC65A /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
+		F5F176E222108F87004DC65A /* AlbumTracks.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumTracks.swift; sourceTree = "<group>"; };
+		F5F176E4221092FF004DC65A /* MusicTrackCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicTrackCell.swift; sourceTree = "<group>"; };
+		F5F176E822109D59004DC65A /* Assets.auto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Assets.auto.swift; sourceTree = "<group>"; };
+		F5F176EB2210A8D0004DC65A /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
 		FA81E1475820A4D3E6AB2FD7 /* Pods_Music2Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Music2Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -147,7 +161,9 @@
 			isa = PBXGroup;
 			children = (
 				F5F176D722103BD0004DC65A /* AlbumsList */,
+				F5F176DF2210659D004DC65A /* AlbumTracks */,
 				F5D631BF220F625B008AB5EE /* Extensions */,
+				F5F176EA2210A8C2004DC65A /* Library */,
 			);
 			path = 2.Views;
 			sourceTree = "<group>";
@@ -232,8 +248,9 @@
 		F5E16C7321F49F6400C8A732 /* 3.UseCases */ = {
 			isa = PBXGroup;
 			children = (
-				F5D631C4220F6E23008AB5EE /* Domain */,
 				F5E16C7621F4B23700C8A732 /* AlbumsList.swift */,
+				F5F176E222108F87004DC65A /* AlbumTracks.swift */,
+				F5D631C4220F6E23008AB5EE /* Domain */,
 			);
 			path = 3.UseCases;
 			sourceTree = "<group>";
@@ -249,7 +266,9 @@
 		F5E16C7521F49F7D00C8A732 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				F5F176E822109D59004DC65A /* Assets.auto.swift */,
 				F5F176DB22104542004DC65A /* Color.swift */,
+				F5F176E022106970004DC65A /* Font.swift */,
 				F5E16C6821F49CC400C8A732 /* Assets.xcassets */,
 				F5E16C6A21F49CC400C8A732 /* LaunchScreen.storyboard */,
 			);
@@ -272,6 +291,24 @@
 				F5F176D822103C2F004DC65A /* AlbumCell.swift */,
 			);
 			path = AlbumsList;
+			sourceTree = "<group>";
+		};
+		F5F176DF2210659D004DC65A /* AlbumTracks */ = {
+			isa = PBXGroup;
+			children = (
+				F5F176DD22106599004DC65A /* AlbumTracksViewController.swift */,
+				F5F176E4221092FF004DC65A /* MusicTrackCell.swift */,
+			);
+			path = AlbumTracks;
+			sourceTree = "<group>";
+		};
+		F5F176EA2210A8C2004DC65A /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				F5F176EB2210A8D0004DC65A /* GradientView.swift */,
+				F53D25C622187772004BBD2B /* NavigationController.swift */,
+			);
+			path = Library;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -306,6 +343,7 @@
 				F5E16C5B21F49CC300C8A732 /* Frameworks */,
 				F5E16C5C21F49CC300C8A732 /* Resources */,
 				DC7BB5B3A6056D5569CF5434 /* [CP] Embed Pods Frameworks */,
+				F5F176E722109D3D004DC65A /* SwiftGen */,
 			);
 			buildRules = (
 			);
@@ -407,6 +445,7 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-Music2/Pods-Music2-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Differentiator/Differentiator.framework",
+				"${BUILT_PRODUCTS_DIR}/Hero/Hero.framework",
 				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
 				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
 				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
@@ -424,6 +463,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Differentiator.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Hero.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
@@ -484,6 +524,24 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Music2Tests/Pods-Music2Tests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		F5F176E722109D3D004DC65A /* SwiftGen */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftGen;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/SwiftGen/bin/swiftgen\"\n";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -503,6 +561,8 @@
 			files = (
 				F5D631C6220F6E31008AB5EE /* Album.swift in Sources */,
 				F5D6319B220F02B4008AB5EE /* Albums.swift in Sources */,
+				F5F176E922109D59004DC65A /* Assets.auto.swift in Sources */,
+				F5F176DE22106599004DC65A /* AlbumTracksViewController.swift in Sources */,
 				F5D6319E220F0472008AB5EE /* Environment.swift in Sources */,
 				F5F176D922103C2F004DC65A /* AlbumCell.swift in Sources */,
 				F5D631C1220F637F008AB5EE /* UITableView+Rx.swift in Sources */,
@@ -510,8 +570,13 @@
 				F5D631A4220F122D008AB5EE /* Configuration.swift in Sources */,
 				F5D631C3220F6C88008AB5EE /* Rx.swift in Sources */,
 				F5F176DC22104542004DC65A /* Color.swift in Sources */,
+				F53D25C722187772004BBD2B /* NavigationController.swift in Sources */,
+				F5F176EC2210A8D0004DC65A /* GradientView.swift in Sources */,
 				F5E16C7721F4B23700C8A732 /* AlbumsList.swift in Sources */,
+				F5F176E5221092FF004DC65A /* MusicTrackCell.swift in Sources */,
 				F5D631BE220F619B008AB5EE /* URLParametersConvertible.swift in Sources */,
+				F5F176E122106970004DC65A /* Font.swift in Sources */,
+				F5F176E322108F87004DC65A /* AlbumTracks.swift in Sources */,
 				F5E16C6421F49CC300C8A732 /* AlbumsListViewController.swift in Sources */,
 				F5D631A0220F0FB3008AB5EE /* Logger.swift in Sources */,
 				F5E16C7A21F4B5C300C8A732 /* Transformable.swift in Sources */,

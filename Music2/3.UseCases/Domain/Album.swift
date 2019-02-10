@@ -13,9 +13,10 @@ struct Album: Equatable, Codable {
     let title: String
     let artist: Artist
     let coverImageURL: URL?
+    let tracks: [MusicTrack]
     
     enum CodingKeys: String, CodingKey {
-        case id, title, artist
+        case id, title, artist, tracks
         case coverImageURL = "coverImage"
     }
 }
@@ -23,4 +24,23 @@ struct Album: Equatable, Codable {
 struct Artist: Equatable, Codable {
     let id: Int
     let name: String
+}
+
+struct MusicTrack: Equatable, Codable {
+    let id: Int
+    let title: String
+    let durationSec: TimeInterval
+    
+    var duration: String {
+        return DateComponentsFormatter.trackDuration.string(from: durationSec) ?? "-:-"
+    }
+}
+
+extension DateComponentsFormatter {
+    static var trackDuration: DateComponentsFormatter = {
+        let f = DateComponentsFormatter()
+        f.allowedUnits = [.hour, .minute, .second]
+        f.unitsStyle = .positional
+        return f
+    }()
 }

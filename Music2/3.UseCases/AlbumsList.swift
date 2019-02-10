@@ -6,9 +6,6 @@
 //  Copyright © 2019 Vladislav Librecht. All rights reserved.
 //
 
-import RxSwift
-import Result
-
 struct AlbumsListState: Transformable, Equatable {
     var albums: [Album]
     var shouldLoadPage: Bool
@@ -45,15 +42,18 @@ enum AlbumsList {
             case .fetchMore:
                 newState.shouldLoadPage = true
                 newState.shouldDisplayError = nil
+                newState.shouldOpenAlbum = nil
                 
             case let .didFetchMore(.success(newAlbums)):
                 newState.albums += newAlbums
                 newState.shouldLoadPage = false
                 newState.shouldDisplayError = nil
+                newState.shouldOpenAlbum = nil
             
             case let .didFetchMore(.failure(error)):
                 newState.shouldLoadPage = false
                 newState.shouldDisplayError = error.localizedDescription
+                newState.shouldOpenAlbum = nil
                 
             case .didSelectItem(let i):
                 newState.shouldOpenAlbum = newState.albums[i]
