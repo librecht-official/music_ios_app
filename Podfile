@@ -7,8 +7,11 @@ def pods
     pod 'RxFeedback'
     pod 'RxDataSources'
     pod 'Moya/RxSwift'
+    
+    pod 'Hero'
     pod 'Reusable'
     pod 'Kingfisher', '~> 4.0'
+    
     pod 'SwiftGen', '~> 6.0'
 end
 
