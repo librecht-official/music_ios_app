@@ -12,69 +12,12 @@ import RxCocoa
 import RxFeedback
 import Kingfisher
 
-class AlbumTracksNavigationBar: UIView {
-    private lazy var effect = UIVisualEffectView(
-        effect: UIBlurEffect(style: .light)
-    )
-    lazy var titleLabel = UILabel()
-    lazy var backButton = UIButton(type: .system)
-    
-    func set(transparency: CGFloat) {
-        effect.alpha = transparency
-        titleLabel.alpha = transparency
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        prepareLayout()
-        configureViews()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func prepareLayout() {
-        addSubview(effect)
-        addSubview(titleLabel)
-        addSubview(backButton)
-        
-        [effect, titleLabel, backButton]
-            .forEach { v in v.translatesAutoresizingMaskIntoConstraints = false }
-        
-        NSLayoutConstraint.activate([
-            effect.topAnchor.constraint(equalTo: topAnchor),
-            effect.bottomAnchor.constraint(equalTo: bottomAnchor),
-            effect.leadingAnchor.constraint(equalTo: leadingAnchor),
-            effect.trailingAnchor.constraint(equalTo: trailingAnchor),
-            
-            backButton.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),
-            backButton.widthAnchor.constraint(greaterThanOrEqualToConstant: 44),
-            backButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 0),
-            backButton.bottomAnchor.constraint(equalTo: bottomAnchor, constant: 0),
-            
-            titleLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -12),
-            titleLabel.leadingAnchor.constraint(greaterThanOrEqualTo: backButton.trailingAnchor, constant: 8),
-            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: trailingAnchor, constant: 8),
-            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
-            ])
-    }
-    
-    func configureViews() {
-        titleLabel.textColor = Color.black.uiColor
-        titleLabel.font = Font.bold(16).uiFont
-        
-        backButton.tintColor = Color.white.uiColor
-        backButton.setImage(Asset.back12x20.image, for: .normal)
-    }
-}
-
 class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
     typealias State = AlbumTracksState
     typealias Command = AlbumTracksCommand
     
     var navigationBarShouldBeHidden: Bool = true
-    private lazy var navigationBar = AlbumTracksNavigationBar()
+    private lazy var topBar = AlbumTracksTopBar()
     
     private lazy var coverImage = UIImageView()
     private lazy var gradient = GradientView(top: UIColor.clear, bottom: Color.blackBackground.uiColor.withAlphaComponent(0.8))
@@ -112,24 +55,42 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
             })
             .disposed(by: disposeBag)
         
+        let displayTracks: (Driver<State>) -> Disposable = { state in
+            state.map { $0.album.tracks }.distinctUntilChanged()
+                .drive(
+                    tableView.rx.items(
+                        cellIdentifier: MusicTrackCell.reuseIdentifier,
+                        cellType: MusicTrackCell.self
+                    )
+                ) { (i, item, cell) in cell.configure(withItem: item, number: i + 1) }
+        }
+        
         let bindUI: (Driver<State>) -> Signal<Command> = bind(self) { (self, state) -> Bindings<Command> in
             let stateToUI = [
-                state.map { $0.album.tracks }.distinctUntilChanged()
-                    .drive(
-                        tableView.rx.items(
-                            cellIdentifier: MusicTrackCell.reuseIdentifier,
-                            cellType: MusicTrackCell.self
-                        )
-                    ) { (i, item, cell) in cell.configure(withItem: item, number: i + 1) }
+                displayTracks(state)
             ]
-            let uiToState = [Signal<Command>]()
+            let uiToState = [
+                tableView.rx.itemSelected
+                    .do(onNext: deselectItem(tableView))
+                    .map { Command.didSelectItem(at: $0.row) }
+                    .asSignal(onErrorSignalWith: Signal.empty())
+            ]
             return Bindings(subscriptions: stateToUI, mutations: uiToState)
         }
+        
+        let bindAudio: (Driver<State>) -> Signal<Command> = react(
+            query: { $0.shouldPlayTrack },
+            effects: { track in
+                Environment.current.audioPlayer.set(tracks: [track])
+                Environment.current.audioPlayer.play()
+                return Signal.just(Command.didStartPlayingTrack)
+            }
+        )
         
         Driver.system(
             initialState: AlbumTracks.initialState(album: album),
             reduce: AlbumTracks.reduce,
-            feedback: bindUI
+            feedback: bindUI, bindAudio
             )
             .drive()
             .disposed(by: disposeBag)
@@ -137,6 +98,11 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
         coverImage.kf.setImage(with: album.coverImageURL)
         albumTitle.text = album.title
         artist.text = album.artist.name
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        tracks.contentInset.bottom += additionalSafeAreaInsets.bottom
     }
 }
 
@@ -147,15 +113,14 @@ private extension AlbumTracksViewController {
         let header = UIView()
         view.addSubview(header)
         view.addSubview(tracks)
-        view.addSubview(navigationBar)
+        view.addSubview(topBar)
         header.addSubview(coverImage)
         header.addSubview(gradient)
         header.addSubview(albumTitle)
         header.addSubview(artist)
         tracks.contentInset.top += layout.headerMaxHeight
-        tracks.contentInset.bottom += 20
         
-        [tracks, coverImage, albumTitle, artist, gradient, header, navigationBar]
+        [tracks, coverImage, albumTitle, artist, gradient, header, topBar]
             .forEach { v in v.translatesAutoresizingMaskIntoConstraints = false }
         
         headerTop = header.topAnchor.constraint(equalTo: view.topAnchor)
@@ -163,10 +128,10 @@ private extension AlbumTracksViewController {
         titleLeading = albumTitle.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 8)
         
         NSLayoutConstraint.activate([
-            navigationBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            navigationBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            navigationBar.topAnchor.constraint(equalTo: view.topAnchor),
-            navigationBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 44),
+            topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            topBar.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            topBar.topAnchor.constraint(equalTo: view.topAnchor),
+            topBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 44),
             
             tracks.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tracks.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -201,8 +166,8 @@ private extension AlbumTracksViewController {
     func configureViews() {
         view.backgroundColor = Color.blackBackground.uiColor
         
-        navigationBar.titleLabel.text = album.title
-        navigationBar.backButton.rx.tap
+        topBar.titleLabel.text = album.title
+        topBar.backButton.rx.tap
             .subscribe(onNext: { [unowned self] in
                 self.navigationController?.popViewController(animated: true)
             })
@@ -227,13 +192,13 @@ private extension AlbumTracksViewController {
     func contentOffsetChanged(_ offset: CGPoint) {
         headerHeight.constant = layout.headerHeight(
             forContentOffsetY: offset.y,
-            navBarTotalHeight: navigationBar.bounds.height
+            navBarTotalHeight: topBar.bounds.height
         )
         let alpha = layout.navBarAlpha(
             forContentOffsetY: offset.y,
-            navBarTotalHeight: navigationBar.bounds.height
+            navBarTotalHeight: topBar.bounds.height
         )
-        navigationBar.set(transparency: alpha)
+        topBar.set(transparency: alpha)
         albumTitle.alpha = 1.0 - alpha
     }
 }

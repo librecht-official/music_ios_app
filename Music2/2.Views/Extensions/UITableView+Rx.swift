@@ -25,3 +25,9 @@ extension Reactive where Base: UITableView {
         }
     }
 }
+
+let deselectItem: (UITableView) -> (IndexPath) -> () = { tableView in
+    return {
+        tableView.deselectRow(at: $0, animated: true)
+    }
+}

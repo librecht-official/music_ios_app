@@ -44,7 +44,6 @@ class AlbumsListViewController: UIViewController {
             }
         }
         
-        let deselectItem: (IndexPath) -> () = { tableView.deselectRow(at: $0, animated: true) }
         let openAlbum: (Album) -> () = { [unowned self] album in
             let vc = AlbumTracksViewController(album: album)
             self.navigationController?.pushViewController(vc, animated: true)
@@ -64,7 +63,7 @@ class AlbumsListViewController: UIViewController {
             let uiToState = [
                 triggerLoadNextPage(state),
                 tableView.rx.itemSelected
-                    .do(onNext: deselectItem)
+                    .do(onNext: deselectItem(tableView))
                     .map { Command.didSelectItem(at: $0.row) }
                     .asSignal(onErrorSignalWith: Signal.empty())
             ]
@@ -90,14 +89,7 @@ class AlbumsListViewController: UIViewController {
     }
     
     func prepareLayout() {
-        view.addSubview(tableView)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
-        ])
+        view.constrain(subview: tableView)
     }
     
     func configureViews() {
@@ -116,11 +108,4 @@ class AlbumsListViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
-}
-
-func infiniteScrollingIndicator() -> UIActivityIndicatorView {
-    let i = UIActivityIndicatorView(style: .white)
-    i.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
-    i.hidesWhenStopped = true
-    return i
 }

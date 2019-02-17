@@ -19,6 +19,11 @@
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
   internal static let back12x20 = ImageAsset(name: "back12x20")
+  internal static let fastBackward44x44 = ImageAsset(name: "fastBackward44x44")
+  internal static let fastForward44x44 = ImageAsset(name: "fastForward44x44")
+  internal static let maxVolume20x16 = ImageAsset(name: "maxVolume20x16")
+  internal static let minVolume20x16 = ImageAsset(name: "minVolume20x16")
+  internal static let pause44x44 = ImageAsset(name: "pause44x44")
   internal static let play44x44 = ImageAsset(name: "play44x44")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name

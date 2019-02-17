@@ -15,10 +15,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        let env = makeAppEnvironment()
+        Environment.push(env)
+        
         let window = UIWindow()
         self.window = window
-        let nc = NavigationController(rootViewController: AlbumsListViewController())
-        window.rootViewController = nc
+        window.rootViewController = MainViewController()
         window.makeKeyAndVisible()
         
         return true

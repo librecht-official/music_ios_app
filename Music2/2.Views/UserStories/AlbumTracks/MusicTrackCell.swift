@@ -25,6 +25,12 @@ class MusicTrackCell: UITableViewCell, Reusable {
         numberLabel.text = "\(number)."
         titleLabel.text = item.title
         durationLabel.text = item.duration
+        configureAs(enabled: item.isAudioAvailable)
+    }
+    
+    func configureAs(enabled: Bool) {
+        selectionStyle = enabled ? .default : .none
+        stack.alpha = enabled ? 1.0 : 0.5
     }
     
     private func prepareLayout() {
@@ -41,7 +47,9 @@ class MusicTrackCell: UITableViewCell, Reusable {
         stack.axis = .horizontal
         
         numberLabel.setContentHuggingPriority(.required, for: .horizontal)
+        numberLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         durationLabel.setContentHuggingPriority(.required, for: .horizontal)
+        durationLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
         
         NSLayoutConstraint.activate([
             stack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),

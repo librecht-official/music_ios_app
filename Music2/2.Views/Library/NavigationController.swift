@@ -29,7 +29,9 @@ extension NavigationController: UINavigationControllerDelegate {
     func navigationController(
         _ navigationController: UINavigationController,
         willShow viewController: UIViewController, animated: Bool) {
-
+        
+        viewController.additionalSafeAreaInsets = additionalSafeAreaInsets
+        
         if let custom = viewController as? NavigationBarCustomization, custom.navigationBarShouldBeHidden {
             setNavigationBarHidden(true, animated: animated)
         }

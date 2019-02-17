@@ -14,5 +14,5 @@ public struct Configuration {
     public let decoder = JSONDecoder()
     public let encoder = JSONEncoder()
     
-    public static let `default` = Configuration(baseURL: URL(string: "http://127.0.0.1:8000")!)
+    public static let `default` = Configuration(baseURL: URL(string: "http://192.168.0.4:8000")!)
 }

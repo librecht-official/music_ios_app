@@ -6,6 +6,8 @@
 //  Copyright © 2019 Vladislav Librecht. All rights reserved.
 //
 
+// MARK: - State
+
 struct AlbumsListState: Transformable, Equatable {
     var albums: [Album]
     var shouldLoadPage: Bool
@@ -22,11 +24,15 @@ extension AlbumsListState {
     }
 }
 
+// MARK: - Command
+
 enum AlbumsListCommand {
     case fetchMore
     case didFetchMore(NetworkingResult<[Album]>)
     case didSelectItem(at: Int)
 }
+
+// MARK: - Module
 
 enum AlbumsList {
     static let initialState = AlbumsListState(

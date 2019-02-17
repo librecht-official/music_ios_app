@@ -29,8 +29,17 @@ class Environment {
         `do`()
         pop()
     }
+    
+    var audioPlayer: AudioPlayer
+    
+    init(audioPlayer: AudioPlayer) {
+        self.audioPlayer = audioPlayer
+    }
 }
 
-//class APIEnvironment: Environment {
-//    let baseURL = URL(string: "http://127.0.0.1:8000/")!
-//}
+func makeAppEnvironment() -> Environment {
+    let audioPlayer = AppAudioPlayer()
+    return Environment(
+        audioPlayer: audioPlayer
+    )
+}

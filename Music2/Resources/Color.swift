@@ -9,12 +9,13 @@
 import UIKit
 
 enum Color {
-    /// #E73931
-    case primaryRed
-    /// #FCE38A
+    /// #FF33FF
+    case primaryPurple
+    /// #FFFF33
     case primaryYellow
-    /// #EF3F61
-    case primaryPink
+    /// #33FFFF
+    case primaryBlue
+    
     /// UIColor.white
     case white
     /// UIColor.lightGray
@@ -28,12 +29,13 @@ enum Color {
 extension Color {
     var uiColor: UIColor {
         switch self {
-        case .primaryRed:
-            return UIColor(rgb: 0xE73931)
+        case .primaryPurple:
+            return UIColor(rgb: 0xFF33FF)
         case .primaryYellow:
-            return UIColor(rgb: 0xFCE38A)
-        case .primaryPink:
-            return UIColor(rgb: 0xEF3F61)
+            return UIColor(rgb: 0xFFFF33)
+        case .primaryBlue:
+            return UIColor(rgb: 0x33FFFF)
+            
         case .white:
             return UIColor.white
         case .lightGray:
