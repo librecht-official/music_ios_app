@@ -16,9 +16,9 @@ class VolumeControl: MView {
     
     override func prepareLayout() {
         stackHorizontally(spacing: 8, [
-            HStackItem(minVolumeImageView, [.width(16)]),
-            HStackItem(volumeSlider),
-            HStackItem(maxVolumeImageView, [.width(16)]),
+            HStackItem(minVolumeImageView, [.centerY]),
+            HStackItem(volumeSlider, [.centerYOffset(9), .heightToContainerRatio(1)]),
+            HStackItem(maxVolumeImageView, [.centerY]),
         ])
     }
     

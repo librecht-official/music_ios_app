@@ -7,6 +7,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 
 class PlaybackControl: MView {
     private(set) lazy var stack = UIStackView()
@@ -38,5 +40,15 @@ class PlaybackControl: MView {
         
         fastBackwardButton.tintColor = Color.black.uiColor
         fastBackwardButton.setImage(Asset.fastBackward44x44.image, for: .normal)
+    }
+}
+
+extension Reactive where Base: PlaybackControl {
+    var isEnabled: Binder<Bool> {
+        return Binder(self.base) { (view, value) in
+            view.playButton.isEnabled = value
+            view.fastForwardButton.isEnabled = value
+            view.fastBackwardButton.isEnabled = value
+        }
     }
 }

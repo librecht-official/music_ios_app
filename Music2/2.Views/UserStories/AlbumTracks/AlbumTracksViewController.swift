@@ -23,7 +23,7 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
     private lazy var gradient = GradientView(top: UIColor.clear, bottom: Color.blackBackground.uiColor.withAlphaComponent(0.8))
     private lazy var albumTitle = UILabel()
     private lazy var artist = UILabel()
-    private lazy var tracks = UITableView()
+    private lazy var tableView = UITableView()
     private var headerTop: NSLayoutConstraint!
     private var headerHeight: NSLayoutConstraint!
     private var titleLeading: NSLayoutConstraint!
@@ -47,7 +47,7 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
         prepareLayout()
         configureViews()
         
-        let tableView = tracks
+        let tableView = self.tableView
         
         tableView.rx.contentOffset
             .bind(onNext: { [unowned self] offset in
@@ -79,10 +79,10 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
         }
         
         let bindAudio: (Driver<State>) -> Signal<Command> = react(
-            query: { $0.shouldPlayTrack },
-            effects: { track in
-                Environment.current.audioPlayer.set(tracks: [track])
-                Environment.current.audioPlayer.play()
+            query: { $0.shouldPlayPlaylist },
+            effects: { playlist in
+                Environment.current.audioPlayer.playlist.accept(playlist)
+                Environment.current.audioPlayer.command.onNext(.play)
                 return Signal.just(Command.didStartPlayingTrack)
             }
         )
@@ -102,25 +102,25 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
     
     override func viewSafeAreaInsetsDidChange() {
         super.viewSafeAreaInsetsDidChange()
-        tracks.contentInset.bottom += additionalSafeAreaInsets.bottom
+        tableView.contentInset.bottom += additionalSafeAreaInsets.bottom
     }
 }
 
 private extension AlbumTracksViewController {
     func prepareLayout() {
-        tracks.contentInsetAdjustmentBehavior = .never
+        tableView.contentInsetAdjustmentBehavior = .never
         
         let header = UIView()
         view.addSubview(header)
-        view.addSubview(tracks)
+        view.addSubview(tableView)
         view.addSubview(topBar)
         header.addSubview(coverImage)
         header.addSubview(gradient)
         header.addSubview(albumTitle)
         header.addSubview(artist)
-        tracks.contentInset.top += layout.headerMaxHeight
+        tableView.contentInset.top += layout.headerMaxHeight
         
-        [tracks, coverImage, albumTitle, artist, gradient, header, topBar]
+        [tableView, coverImage, albumTitle, artist, gradient, header, topBar]
             .forEach { v in v.translatesAutoresizingMaskIntoConstraints = false }
         
         headerTop = header.topAnchor.constraint(equalTo: view.topAnchor)
@@ -133,10 +133,10 @@ private extension AlbumTracksViewController {
             topBar.topAnchor.constraint(equalTo: view.topAnchor),
             topBar.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 44),
             
-            tracks.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tracks.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            tracks.topAnchor.constraint(equalTo: view.topAnchor),
-            tracks.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             headerTop,
             headerHeight,
@@ -173,12 +173,12 @@ private extension AlbumTracksViewController {
             })
             .disposed(by: disposeBag)
         
-        tracks.register(cellType: MusicTrackCell.self)
-        tracks.rowHeight = layout.rowHeight
-        tracks.backgroundColor = UIColor.clear
-        tracks.tableFooterView = UIView()
-        tracks.alwaysBounceVertical = true
-        tracks.bounces = true
+        tableView.register(cellType: MusicTrackCell.self)
+        tableView.rowHeight = layout.rowHeight
+        tableView.backgroundColor = UIColor.clear
+        tableView.tableFooterView = UIView()
+        tableView.alwaysBounceVertical = true
+        tableView.bounces = true
         
         coverImage.clipsToBounds = true
         coverImage.contentMode = .scaleAspectFill

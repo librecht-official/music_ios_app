@@ -26,6 +26,11 @@ enum StackItemLayoutRule {
     case leading
     case trailing
     case bottom
+    
+    case topInset(CGFloat)
+    case leadingInset(CGFloat)
+    case trailingInset(CGFloat)
+    case bottomInset(CGFloat)
 }
 
 protocol StackItem {
@@ -161,6 +166,15 @@ extension UIView {
             return item.trailingAnchor.constraint(equalTo: item.superview!.trailingAnchor, constant: -insets.right)
         case .bottom:
             return item.bottomAnchor.constraint(equalTo: item.superview!.bottomAnchor, constant: -insets.bottom)
+            
+        case .topInset(let inset):
+            return item.topAnchor.constraint(equalTo: item.superview!.topAnchor, constant: inset)
+        case .leadingInset(let inset):
+            return item.leadingAnchor.constraint(equalTo: item.superview!.leadingAnchor, constant: inset)
+        case .trailingInset(let inset):
+            return item.trailingAnchor.constraint(equalTo: item.superview!.trailingAnchor, constant: -inset)
+        case .bottomInset(let inset):
+            return item.bottomAnchor.constraint(equalTo: item.superview!.bottomAnchor, constant: -inset)
         }
     }
 }

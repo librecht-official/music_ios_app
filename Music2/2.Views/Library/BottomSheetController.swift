@@ -95,15 +95,17 @@ class BottomSheetController {
             case .open:
                 self.bottomConstraint.constant = 0
                 self.overlayView.alpha = 0.5
-                //                self.container.transform = CGAffineTransform(scaleX: 0.8, y: 0.8)
-                //                self.closedTitleLabel.transform = CGAffineTransform(scaleX: 1.6, y: 1.6).concatenating(CGAffineTransform(translationX: 0, y: 15))
-            //                self.openTitleLabel.transform = .identity
+//                self.container.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
+//                self.bottomSheet.transform = CGAffineTransform(scaleX: 1.0 / 0.9, y: 1.0 / 0.9)
+//                self.closedTitleLabel.transform = CGAffineTransform(scaleX: 1.6, y: 1.6).concatenating(CGAffineTransform(translationX: 0, y: 15))
+//                self.openTitleLabel.transform = .identity
             case .closed:
                 self.bottomConstraint.constant = self.bottomSheetOffset
                 self.overlayView.alpha = 0
-                //                self.container.transform = .identity
-                //                self.closedTitleLabel.transform = .identity
-                //                self.openTitleLabel.transform = CGAffineTransform(scaleX: 0.65, y: 0.65).concatenating(CGAffineTransform(translationX: 0, y: -15))
+//                self.container.transform = .identity
+//                self.bottomSheet.transform = .identity
+//                self.closedTitleLabel.transform = .identity
+//                self.openTitleLabel.transform = CGAffineTransform(scaleX: 0.65, y: 0.65).concatenating(CGAffineTransform(translationX: 0, y: -15))
             }
             self.container.layoutIfNeeded()
         })

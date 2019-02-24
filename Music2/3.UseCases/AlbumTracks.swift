@@ -10,7 +10,7 @@
 
 struct AlbumTracksState: Transformable, Equatable {
     var album: Album
-    var shouldPlayTrack: MusicTrack?
+    var shouldPlayPlaylist: AudioPlayerPlaylist?
 }
 
 // MARK: - Command
@@ -26,7 +26,7 @@ enum AlbumTracks {
     static func initialState(album: Album) -> AlbumTracksState {
         return AlbumTracksState(
             album: album,
-            shouldPlayTrack: nil
+            shouldPlayPlaylist: nil
         )
     }
     
@@ -34,9 +34,12 @@ enum AlbumTracks {
         return state.transforming { newState in
             switch command {
             case let .didSelectItem(at: index):
-                newState.shouldPlayTrack = state.album.tracks[index]
+                newState.shouldPlayPlaylist = AudioPlayerPlaylist.album(
+                    newState.album,
+                    startFrom: index
+                )
             case .didStartPlayingTrack:
-                newState.shouldPlayTrack = nil
+                newState.shouldPlayPlaylist = nil
             }
         }
     }
