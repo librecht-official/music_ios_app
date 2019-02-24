@@ -14,7 +14,8 @@ extension Album {
             id: id,
             title: "Title \(id)",
             artist: Artist(id: 1, name: "Artist \(id)"),
-            coverImageURL: nil
+            coverImageURL: nil,
+            tracks: []
         )
     }
 }
