@@ -31,6 +31,9 @@ PODS:
   - RxSwift (4.4.0):
     - RxAtomic (~> 4.4)
   - SwiftGen (6.1.0)
+  - Yoga (1.9.0)
+  - YogaKit (1.10.0):
+    - Yoga (~> 1.9)
 
 DEPENDENCIES:
   - Hero
@@ -44,6 +47,7 @@ DEPENDENCIES:
   - RxOptional
   - RxSwift
   - SwiftGen (~> 6.0)
+  - YogaKit (~> 1.7)
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
@@ -61,6 +65,8 @@ SPEC REPOS:
     - RxOptional
     - RxSwift
     - SwiftGen
+    - Yoga
+    - YogaKit
 
 SPEC CHECKSUMS:
   Alamofire: 3ec537f71edc9804815215393ae2b1a8ea33a844
@@ -77,7 +83,9 @@ SPEC CHECKSUMS:
   RxOptional: 80426a0ddbd092573e4c482d8cc13302078c4d5e
   RxSwift: 5976ecd04fc2fefd648827c23de5e11157faa973
   SwiftGen: f872ca75cbd17bf7103c17f13dcfa0d9a15667b0
+  Yoga: aaae8abea68951f60bee05f6277d3eed90bb91bb
+  YogaKit: 3107fd5c2c233b540a1c5e376b95ac2c40398d6b
 
-PODFILE CHECKSUM: 66519fe94c8c9a4e3d697715bf2b94c848de4575
+PODFILE CHECKSUM: 6e383e35a2f8cc3bbc42c040fb20038295abdc41
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.6.1

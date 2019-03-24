@@ -11,6 +11,7 @@ def pods
     pod 'Hero'
     pod 'Reusable'
     pod 'Kingfisher', '~> 4.0'
+    pod 'YogaKit', '~> 1.7'
     
     pod 'SwiftGen', '~> 6.0'
 end
