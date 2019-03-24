@@ -9,9 +9,11 @@
 import UIKit
 
 enum Font {
-    // system 36, bold
+    /// system 36, bold
     case barTitle
-    // system bold
+    /// system regular 14
+    case smallCaption
+    /// system bold
     case bold(Float)
 }
 
@@ -20,6 +22,8 @@ extension Font {
         switch self {
         case .barTitle:
             return UIFont.systemFont(ofSize: 36, weight: .bold)
+        case .smallCaption:
+            return UIFont.systemFont(ofSize: 14)
         case .bold(let size):
             return UIFont.systemFont(ofSize: CGFloat(size), weight: .bold)
         }

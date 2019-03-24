@@ -14,14 +14,22 @@ class MView: UIView {
         prepareLayout()
         configureViews()
     }
-    
+
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     func prepareLayout() {
     }
-    
+
     func configureViews() {
     }
 }
+
+class LayoutView: UIView {
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        Layout.applyLayout(self)
+    }
+}
+

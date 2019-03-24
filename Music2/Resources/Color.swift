@@ -18,8 +18,14 @@ enum Color {
     
     /// UIColor.white
     case white
-    /// UIColor.lightGray
+    /// #EEEEEE
+    case altoGray
+    /// #D8D8D8
+    case galleryGray
+    /// UIColor.lightGray (rgb: 2/3 a: 1)
     case lightGray
+    /// UIColor(white: 0, alpha: 0.35)
+    case gray
     /// #0F0F0F
     case blackBackground
     /// UIColor.black
@@ -38,13 +44,23 @@ extension Color {
             
         case .white:
             return UIColor.white
+        case .altoGray:
+            return UIColor(rgb: 0xEEEEEE)
+        case .galleryGray:
+            return UIColor(rgb: 0xD8D8D8)
         case .lightGray:
             return UIColor.lightGray
+        case .gray:
+            return UIColor(white: 0, alpha: 0.35)
         case .blackBackground:
             return UIColor(rgb: 0x0F0F0F)
         case .black:
             return UIColor.black
         }
+    }
+    
+    var cgColor: CGColor {
+        return uiColor.cgColor
     }
 }
 

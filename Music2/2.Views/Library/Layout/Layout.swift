@@ -14,6 +14,10 @@ protocol LayoutNode {
     func configureLayout() -> UIView
 }
 
+protocol LayoutComponent {
+    func render() -> LayoutNode
+}
+
 enum Layout {
     
     // MARK: Composite Node
@@ -46,7 +50,7 @@ enum Layout {
         let view: View
         let style: Style<View>
         
-        init(_ view: View, style: Style<View>) {
+        init(_ view: View, style: Style<View> = .empty()) {
             self.view = view
             self.style = style
         }
@@ -57,6 +61,20 @@ enum Layout {
             view.configureLayout(block: style.layout)
             
             return view
+        }
+    }
+    
+    // MARK: - Special Component Node (Sublayout)
+    
+    struct Component: LayoutNode {
+        let component: LayoutComponent
+        
+        init(_ component: LayoutComponent) {
+            self.component = component
+        }
+        
+        func configureLayout() -> UIView {
+            return component.render().configureLayout()
         }
     }
     
@@ -87,6 +105,8 @@ enum Layout {
             }
             self.styling = styling
         }
+        
+        static func empty<V: UIView>() -> Style<V> { return Style<V>() }
     }
     
     // MARK: Rendering
@@ -153,3 +173,26 @@ extension Layout.Style {
         return self + Layout.Style<V>(layout: layout)
     }
 }
+
+/*
+class ComponentView: UIView {
+    convenience init(component: LayoutComponent) {
+        self.init(frame: .zero)
+        Layout.Composite(self, style: Styles.Common.container, [
+            Layout.Component(component)
+        ])
+        .configureLayout()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        Layout.applyLayout(self)
+    }
+}
+
+class PlaybackProgressView: ComponentView {
+    convenience init() {
+        self.init(component: PlaybackProgress())
+    }
+}
+*/

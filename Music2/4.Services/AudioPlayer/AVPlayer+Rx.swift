@@ -39,6 +39,21 @@ extension Reactive where Base: AVPlayer {
     var currentItem: Observable<AVPlayerItem?> {
         return observe(AVPlayerItem.self, #keyPath(AVPlayer.currentItem))
     }
+    
+    enum PlayingFinishResult {
+        case nextItemAvaliable
+        case stop
+    }
+    var currentItemDidPlayToEnd: Observable<PlayingFinishResult> {
+        return currentItem.flatMap { item -> Observable<PlayingFinishResult> in
+            if let item = item {
+                return item.rx.didPlayToEnd.map { _ in .nextItemAvaliable }
+            }
+            else {
+                return .just(.stop)
+            }
+        }
+    }
 }
 
 extension AVPlayer.Status: CustomStringConvertible {

@@ -9,8 +9,15 @@
 import UIKit
 
 class MainViewController: UIViewController {
-    private lazy var bottomSheet: UIVisualEffectView = {
-        let view = UIVisualEffectView(effect: UIBlurEffect(style: .extraLight))
+    private lazy var bottomSheet: UIView = {
+        let view = GradientView(top: Color.altoGray.uiColor, bottom: Color.lightGray.uiColor)
+//        view.alpha = 0.8
+//        view.backgroundColor = Color.white.uiColor
+//        let view = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+//        view.tintColor = UIColor.clear
+//        view.backgroundColor = UIColor.clear
+//        view.contentView.backgroundColor = UIColor.clear
+//        view.contentView.tintColor = UIColor.clear
         view.layer.cornerRadius = 20
         view.layer.masksToBounds = true
         return view
@@ -32,8 +39,8 @@ class MainViewController: UIViewController {
         embed(child: albumsListController)
         view.constrain(subview: albumsListController.view)
         
-        embed(child: audioPlayerController, inside: bottomSheet.contentView)
-        bottomSheet.contentView.constrain(subview: audioPlayerController.view)
+        embed(child: audioPlayerController, inside: bottomSheet)
+        bottomSheet.constrain(subview: audioPlayerController.view)
     }
     
     override func viewWillAppear(_ animated: Bool) {

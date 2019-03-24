@@ -33,7 +33,7 @@ class AudioPlayerViewController: UIViewController {
         
         Driver.combineLatest(player.currentPlaybackTime, player.currentPlaybackTotalTime)
             .map { PlaybackProgressViewModel(currentTime: $0, totalTime: $1) }
-            .drive(interfaceView.playbackProgressView.rx.playbackInfo)
+            .drive(interfaceView.playbackProgress.rx.playbackInfo)
             .disposed(by: disposeBag)
         
         Driver.combineLatest(player.playlist.asDriver(), player.currentTrack)
@@ -49,7 +49,7 @@ class AudioPlayerViewController: UIViewController {
             })
             .disposed(by: disposeBag)
         
-        interfaceView.playbackProgressView.slider.rx.value
+        interfaceView.playbackProgress.rx.value
             .withLatestFrom(player.currentPlaybackTotalTime.filterNil()) { ($0, $1) }
             .map { TimeInterval($0) * $1 }
             .map { AudioPlayerCommand.seek(to: $0) }

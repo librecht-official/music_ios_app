@@ -27,8 +27,13 @@ internal enum Asset {
   internal static let pause44x44 = ImageAsset(name: "pause44x44")
   internal static let play44x44 = ImageAsset(name: "play44x44")
   internal static let playedProgress = ImageAsset(name: "playedProgress")
+  internal static let progressBackground = ImageAsset(name: "progressBackground")
+  internal static let progressBackground2 = ImageAsset(name: "progressBackground2")
+  internal static let progressBackground3 = ImageAsset(name: "progressBackground3")
   internal static let progressThumb = ImageAsset(name: "progressThumb")
+  internal static let remaingingProgress3 = ImageAsset(name: "remaingingProgress3")
   internal static let remainingProgress = ImageAsset(name: "remainingProgress")
+  internal static let remainingProgress2 = ImageAsset(name: "remainingProgress2")
 }
 // swiftlint:enable identifier_name line_length nesting type_body_length type_name
 

@@ -7,10 +7,10 @@
         "mode" : "3-part-horizontal",
         "center" : {
           "mode" : "stretch",
-          "width" : 127
+          "width" : 1
         },
         "cap-insets" : {
-          "right" : 20,
+          "right" : 19,
           "left" : 0
         }
       }

@@ -9,28 +9,24 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import YogaKit
 
-class PlaybackControl: MView {
-    private(set) lazy var stack = UIStackView()
+class PlaybackControl: LayoutComponent {
     private(set) lazy var playButton = UIButton(type: .system)
     private(set) lazy var fastForwardButton = UIButton(type: .system)
     private(set) lazy var fastBackwardButton = UIButton(type: .system)
     
-    override func prepareLayout() {
-        [stack, playButton, fastForwardButton, fastBackwardButton].forEach {
-            $0.translatesAutoresizingMaskIntoConstraints = false
-        }
+    func render() -> LayoutNode {
+        configureViews()
         
-        constrain(subview: stack, insets: UIEdgeInsets.standard8)
-        stack.addArrangedSubview(fastBackwardButton)
-        stack.addArrangedSubview(playButton)
-        stack.addArrangedSubview(fastForwardButton)
-        
-        stack.spacing = 8
-        stack.distribution = .fillEqually
+        return Layout.Composite(UIView(), style: Styles.container, [
+            Layout.Button(fastBackwardButton, style: Styles.button),
+            Layout.Button(playButton, style: Styles.button),
+            Layout.Button(fastForwardButton, style: Styles.button),
+        ])
     }
     
-    override func configureViews() {
+    func configureViews() {
         playButton.tintColor = Color.black.uiColor
         playButton.setImage(Asset.play44x44.image, for: .normal)
         playButton.setImage(Asset.pause44x44.image, for: .selected)
@@ -41,6 +37,23 @@ class PlaybackControl: MView {
         fastBackwardButton.tintColor = Color.black.uiColor
         fastBackwardButton.setImage(Asset.fastBackward44x44.image, for: .normal)
     }
+}
+
+private extension Styles {
+    static let container = Layout.Style<UIView>(layout: {
+        $0.flexGrow = 1
+        $0.flexDirection = .row
+        $0.justifyContent = .spaceBetween
+        $0.alignItems = .stretch
+    })
+    
+    static let button = Layout.Style<UIButton>(layout: {
+        $0.flexGrow = 1
+        $0.marginHorizontal = 4
+    })
+}
+
+extension PlaybackControl: ReactiveCompatible {
 }
 
 extension Reactive where Base: PlaybackControl {
