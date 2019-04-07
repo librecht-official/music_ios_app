@@ -12,7 +12,7 @@ import RxCocoa
 import YogaKit
 
 class PlaybackControl: LayoutComponent {
-    private(set) lazy var playButton = UIButton(type: .system)
+    private(set) lazy var playButton = UIButton(type: .custom)
     private(set) lazy var fastForwardButton = UIButton(type: .system)
     private(set) lazy var fastBackwardButton = UIButton(type: .system)
     

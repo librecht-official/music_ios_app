@@ -11,13 +11,6 @@ import UIKit
 class MainViewController: UIViewController {
     private lazy var bottomSheet: UIView = {
         let view = GradientView(top: Color.altoGray.uiColor, bottom: Color.lightGray.uiColor)
-//        view.alpha = 0.8
-//        view.backgroundColor = Color.white.uiColor
-//        let view = UIVisualEffectView(effect: UIBlurEffect(style: .light))
-//        view.tintColor = UIColor.clear
-//        view.backgroundColor = UIColor.clear
-//        view.contentView.backgroundColor = UIColor.clear
-//        view.contentView.tintColor = UIColor.clear
         view.layer.cornerRadius = 20
         view.layer.masksToBounds = true
         return view
@@ -28,14 +21,16 @@ class MainViewController: UIViewController {
         bottomSheet: bottomSheet,
         container: view,
         bottomSheetMaxHeight: UIScreen.main.bounds.height * 0.85,
-        bottomSheetMinHeight: 90
+        bottomSheetMinHeight: 100
     )
     
     private lazy var albumsListController = NavigationController(rootViewController: AlbumsListViewController())
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        albumsListController.additionalSafeAreaInsets.bottom += 90
+        bottomSheetController.delegate = self
+        
+        albumsListController.additionalSafeAreaInsets.bottom += 100
         embed(child: albumsListController)
         view.constrain(subview: albumsListController.view)
         
@@ -47,5 +42,34 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         view.layoutIfNeeded()
         bottomSheetController.prepare()
+    }
+}
+
+extension MainViewController: BottomSheetControllerDelegate {
+    func bottomSheetControllerAnimatingState(to state: BottomSheetController.State) {
+        switch state {
+        case .closed:
+            audioPlayerController.minimize()
+        case .open:
+            audioPlayerController.maximize()
+        }
+    }
+    
+    func bottomSheetControllerAnimatingFirstKeyframeState(to state: BottomSheetController.State) {
+        switch state {
+        case .closed:
+            audioPlayerController.prepareForFirstKeyFrameMinimization()
+        case .open:
+            audioPlayerController.prepareForFirstKeyFrameMaximization()
+        }
+    }
+    
+    func bottomSheetControllerAnimatingLastKeyframeState(to state: BottomSheetController.State) {
+        switch state {
+        case .closed:
+            audioPlayerController.prepareForLastKeyFrameMinimization()
+        case .open:
+            audioPlayerController.prepareForLastKeyFrameMaximization()
+        }
     }
 }

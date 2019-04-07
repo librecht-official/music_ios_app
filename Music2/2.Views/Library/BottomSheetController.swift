@@ -5,8 +5,15 @@
 //  Created by Vladislav Librecht on 17.02.2019.
 //  Copyright © 2019 Vladislav Librecht. All rights reserved.
 //
+// https://developer.apple.com/videos/play/wwdc2017/230/
 
 import UIKit
+
+protocol BottomSheetControllerDelegate: AnyObject {
+    func bottomSheetControllerAnimatingState(to state: BottomSheetController.State)
+    func bottomSheetControllerAnimatingFirstKeyframeState(to state: BottomSheetController.State)
+    func bottomSheetControllerAnimatingLastKeyframeState(to state: BottomSheetController.State)
+}
 
 class BottomSheetController {
     enum State {
@@ -20,6 +27,8 @@ class BottomSheetController {
             }
         }
     }
+    
+    weak var delegate: BottomSheetControllerDelegate?
     
     public init(
         bottomSheet: UIView,
@@ -45,7 +54,7 @@ class BottomSheetController {
     
     private lazy var overlayView: UIView = {
         let view = UIView()
-        view.backgroundColor = .black
+        view.backgroundColor = UIColor.black
         view.alpha = 0
         return view
     }()
@@ -71,7 +80,11 @@ class BottomSheetController {
     // MARK: - Animation
     
     /// The current state of the animation. This variable is changed only when an animation completes.
-    private var currentState: State = .closed
+    private var currentState: State = .closed {
+        didSet {
+            print("currentState: \(currentState)")
+        }
+    }
     
     /// All of the currently running animators.
     private var runningAnimators = [UIViewPropertyAnimator]()
@@ -81,7 +94,7 @@ class BottomSheetController {
     
     private lazy var panRecognizer: UIPanGestureRecognizer = {
         let recognizer = UIPanGestureRecognizer()
-        recognizer.addTarget(self, action: #selector(bottomSheetPanned(recognizer:)))
+        recognizer.addTarget(self, action: #selector(handlePan(_:)))
         return recognizer
     }()
     
@@ -89,35 +102,41 @@ class BottomSheetController {
     private func animateTransitionIfNeeded(to state: State, duration: TimeInterval) {
         guard runningAnimators.isEmpty else { return }
         
-        // an animator for the transition
-        let transitionAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1, animations: {
+        let transitionAnimator = UIViewPropertyAnimator(duration: duration, curve: .linear, animations: {
             switch state {
             case .open:
                 self.bottomConstraint.constant = 0
                 self.overlayView.alpha = 0.5
-//                self.container.transform = CGAffineTransform(scaleX: 0.9, y: 0.9)
-//                self.bottomSheet.transform = CGAffineTransform(scaleX: 1.0 / 0.9, y: 1.0 / 0.9)
-//                self.closedTitleLabel.transform = CGAffineTransform(scaleX: 1.6, y: 1.6).concatenating(CGAffineTransform(translationX: 0, y: 15))
-//                self.openTitleLabel.transform = .identity
             case .closed:
                 self.bottomConstraint.constant = self.bottomSheetOffset
                 self.overlayView.alpha = 0
-//                self.container.transform = .identity
-//                self.bottomSheet.transform = .identity
-//                self.closedTitleLabel.transform = .identity
-//                self.openTitleLabel.transform = CGAffineTransform(scaleX: 0.65, y: 0.65).concatenating(CGAffineTransform(translationX: 0, y: -15))
             }
-            self.container.layoutIfNeeded()
+            // zero duration here means that keyframe animation will inherit duration of it's outer property animator
+            UIView.animateKeyframes(withDuration: 0, delay: 0, options: [], animations: {
+                self.delegate?.bottomSheetControllerAnimatingState(to: state)
+                self.container.layoutIfNeeded()
+                
+                UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.1, animations: {
+                    self.delegate?.bottomSheetControllerAnimatingFirstKeyframeState(to: state)
+                })
+                UIView.addKeyframe(withRelativeStartTime: 0.9, relativeDuration: 0.1, animations: {
+                    self.delegate?.bottomSheetControllerAnimatingLastKeyframeState(to: state)
+                })
+            })
         })
         
         transitionAnimator.addCompletion { position in
             switch position {
             case .start:
                 self.currentState = state.opposite
+                self.delegate?.bottomSheetControllerAnimatingState(to: self.currentState)
+                self.delegate?.bottomSheetControllerAnimatingFirstKeyframeState(to: self.currentState)
+                self.delegate?.bottomSheetControllerAnimatingLastKeyframeState(to: self.currentState)
+                self.container.layoutIfNeeded()
             case .end:
                 self.currentState = state
             case .current:
-                ()
+                break
             }
             
             switch self.currentState {
@@ -163,10 +182,10 @@ class BottomSheetController {
         //        runningAnimators.append(outTitleAnimator)
     }
     
-    @objc private func bottomSheetPanned(recognizer: UIPanGestureRecognizer) {
+    @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .began:
-            animateTransitionIfNeeded(to: currentState.opposite, duration: 1)
+            animateTransitionIfNeeded(to: currentState.opposite, duration: 0.25)
             // pause all animations, since the next event may be a pan changed
             runningAnimators.forEach { $0.pauseAnimation() }
             // keep track of each animator's progress
@@ -177,39 +196,51 @@ class BottomSheetController {
             var fraction = -translation.y / bottomSheetOffset
             
             // adjust the fraction for the current state and reversed state
-            if currentState == .open { fraction *= -1 }
-            if runningAnimators[0].isReversed { fraction *= -1 }
-            
+            if currentState == .open {
+                fraction *= -1
+            }
+            if runningAnimators[0].isReversed {
+                fraction *= -1
+            }
             // apply the new fraction
             for (index, animator) in runningAnimators.enumerated() {
                 animator.fractionComplete = fraction + animationProgress[index]
             }
-            
         case .ended:
             let yVelocity = recognizer.velocity(in: bottomSheet).y
             let shouldClose = yVelocity > 0
             
             // if there is no motion, continue all animations and exit early
             if yVelocity == 0 {
-                runningAnimators.forEach { $0.continueAnimation(withTimingParameters: nil, durationFactor: 0) }
+                continueAllAnimations()
                 break
             }
-            
             // reverse the animations based on their current state and pan motion
             switch currentState {
             case .open:
-                if !shouldClose && !runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
-                if shouldClose && runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
+                if !shouldClose && !runningAnimators[0].isReversed {
+                    runningAnimators.forEach { $0.isReversed = !$0.isReversed }
+                }
+                if shouldClose && runningAnimators[0].isReversed {
+                    runningAnimators.forEach { $0.isReversed = !$0.isReversed }
+                }
             case .closed:
-                if shouldClose && !runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
-                if !shouldClose && runningAnimators[0].isReversed { runningAnimators.forEach { $0.isReversed = !$0.isReversed } }
+                if shouldClose && !runningAnimators[0].isReversed {
+                    runningAnimators.forEach { $0.isReversed = !$0.isReversed }
+                }
+                if !shouldClose && runningAnimators[0].isReversed {
+                    runningAnimators.forEach { $0.isReversed = !$0.isReversed }
+                }
             }
-            
-            // continue all animations
-            runningAnimators.forEach { $0.continueAnimation(withTimingParameters: nil, durationFactor: 0) }
-            
+            continueAllAnimations()
         default:
             break
+        }
+    }
+    
+    private func continueAllAnimations() {
+        runningAnimators.forEach {
+            $0.continueAnimation(withTimingParameters: nil, durationFactor: 0)
         }
     }
 }

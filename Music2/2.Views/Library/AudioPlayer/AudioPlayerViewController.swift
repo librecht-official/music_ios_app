@@ -12,16 +12,22 @@ import RxCocoa
 import AVFoundation
 
 class AudioPlayerViewController: UIViewController {
-    private lazy var interfaceView = AudioPlayerView()
+//    private lazy var minimizedView = MinimizedAudioPlayerView()
+//    private lazy var maximizedView = MaximizedAudioPlayerView()
+    private lazy var adaptiveView = AdaptiveAudioPlayerView()
     private lazy var player = Environment.current.audioPlayer
     private let disposeBag = DisposeBag()
+    
+    private var heightConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.addSubview(interfaceView)
-        view.constrain(subview: interfaceView)
-        
+        view.addSubview(adaptiveView)
+        bindUI(interfaceView: adaptiveView)
+    }
+    
+    func bindUI(interfaceView: AdaptiveAudioPlayerView) {
         player.status
             .map { $0 == .readyToPlay }
             .drive(interfaceView.playbackControl.rx.isEnabled)
@@ -33,23 +39,23 @@ class AudioPlayerViewController: UIViewController {
         
         Driver.combineLatest(player.currentPlaybackTime, player.currentPlaybackTotalTime)
             .map { PlaybackProgressViewModel(currentTime: $0, totalTime: $1) }
-            .drive(interfaceView.playbackProgress.rx.playbackInfo)
+            .drive(interfaceView.rx.playbackInfo)
             .disposed(by: disposeBag)
         
         Driver.combineLatest(player.playlist.asDriver(), player.currentTrack)
-            .drive(onNext: { [unowned self] (playlist, currentTrack) in
+            .drive(onNext: { (playlist, currentTrack) in
                 switch playlist {
                 case .none:
-                    self.interfaceView.set(albumCoverURL: nil)
-                    self.interfaceView.titleLabel.text = Format.trackNoTitle
+                    interfaceView.set(albumCoverURL: nil)
+                    interfaceView.set(title: Format.trackNoTitle)
                 case let .album(album, startFrom: _):
-                    self.interfaceView.set(albumCoverURL: album.coverImageURL)
-                    self.interfaceView.titleLabel.text = Format.trackFullTitle(currentTrack, album: album)
+                    interfaceView.set(albumCoverURL: album.coverImageURL)
+                    interfaceView.set(title: Format.trackFullTitle(currentTrack, album: album))
                 }
             })
             .disposed(by: disposeBag)
         
-        interfaceView.playbackProgress.rx.value
+        interfaceView.rx.value
             .withLatestFrom(player.currentPlaybackTotalTime.filterNil()) { ($0, $1) }
             .map { TimeInterval($0) * $1 }
             .map { AudioPlayerCommand.seek(to: $0) }
@@ -61,5 +67,34 @@ class AudioPlayerViewController: UIViewController {
             .map { $0 ? AudioPlayerCommand.pause : .play }
             .bind(to: player.command)
             .disposed(by: disposeBag)
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        adaptiveView.frame = view.bounds
+    }
+    
+    func prepareForFirstKeyFrameMinimization() {
+        adaptiveView.prepareForFirstKeyFrameMinimization()
+    }
+    
+    func minimize() {
+        adaptiveView.state = .minimized
+    }
+    
+    func prepareForLastKeyFrameMinimization() {
+        adaptiveView.prepareForLastKeyFrameMinimization()
+    }
+    
+    func prepareForFirstKeyFrameMaximization() {
+        adaptiveView.prepareForFirstKeyFrameMaximization()
+    }
+    
+    func maximize() {
+        adaptiveView.state = .maximized
+    }
+    
+    func prepareForLastKeyFrameMaximization() {
+        adaptiveView.prepareForLastKeyFrameMaximization()
     }
 }
