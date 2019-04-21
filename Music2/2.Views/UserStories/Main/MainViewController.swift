@@ -24,15 +24,21 @@ class MainViewController: UIViewController {
         bottomSheetMinHeight: 100
     )
     
-    private lazy var albumsListController = NavigationController(rootViewController: AlbumsListViewController())
+//    private lazy var albumsListController = NavigationController(rootViewController: AlbumsListViewController())
+    private lazy var pagesViewController = PagesViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = Color.white.uiColor
+        
         bottomSheetController.delegate = self
         
-        albumsListController.additionalSafeAreaInsets.bottom += 100
-        embed(child: albumsListController)
-        view.constrain(subview: albumsListController.view)
+        pagesViewController.additionalSafeAreaInsets.bottom += 100
+        embed(child: pagesViewController)
+        view.constrain(
+            subview: pagesViewController.view,
+            topAnchor: view.safeAreaLayoutGuide.topAnchor
+        )
         
         embed(child: audioPlayerController, inside: bottomSheet)
         bottomSheet.constrain(subview: audioPlayerController.view)

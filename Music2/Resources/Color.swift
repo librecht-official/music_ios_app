@@ -40,7 +40,7 @@ extension Color {
         case .primaryYellow:
             return UIColor(rgb: 0xFFFF33)
         case .primaryBlue:
-            return UIColor(rgb: 0x33FFFF)
+            return UIColor(rgb: 0x2687FB)
             
         case .white:
             return UIColor.white

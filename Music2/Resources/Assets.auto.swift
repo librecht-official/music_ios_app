@@ -27,6 +27,7 @@ internal enum Asset {
   internal static let pause44x44 = ImageAsset(name: "pause44x44")
   internal static let play44x44 = ImageAsset(name: "play44x44")
   internal static let playedProgress = ImageAsset(name: "playedProgress")
+  internal static let profileMock = ImageAsset(name: "profile_mock")
   internal static let progressBackground = ImageAsset(name: "progressBackground")
   internal static let progressBackground2 = ImageAsset(name: "progressBackground2")
   internal static let progressBackground3 = ImageAsset(name: "progressBackground3")

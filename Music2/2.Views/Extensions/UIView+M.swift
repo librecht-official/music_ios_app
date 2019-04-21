@@ -59,17 +59,21 @@ struct HStackItem: StackItem {
 }
 
 extension UIView {
-    func constrain(subview: UIView, insets: UIEdgeInsets = .zero) {
-        if subview.superview == nil {
+    func constrain(
+        subview: UIView, insets: UIEdgeInsets = .zero, topAnchor: NSLayoutYAxisAnchor? = nil) {
+        
+        if subview.superview != self {
+            subview.removeFromSuperview()
             addSubview(subview)
         }
         subview.translatesAutoresizingMaskIntoConstraints = false
+        let top = topAnchor ?? self.topAnchor
         NSLayoutConstraint.activate([
-            subview.topAnchor.constraint(equalTo: topAnchor, constant: insets.top),
+            subview.topAnchor.constraint(equalTo: top, constant: insets.top),
             subview.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -insets.bottom),
             subview.leadingAnchor.constraint(equalTo: leadingAnchor, constant: insets.left),
             subview.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -insets.right),
-            ])
+        ])
     }
     
     func stackVertically(spacing: CGFloat, insets: UIEdgeInsets = .zero, _ items: [VStackItem]) {

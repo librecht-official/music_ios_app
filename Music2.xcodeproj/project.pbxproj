@@ -29,6 +29,7 @@
 		F5B65DE52219C27F00465444 /* UIViewController+M.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B65DE42219C27F00465444 /* UIViewController+M.swift */; };
 		F5B65DE72219C8D400465444 /* UIView+M.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B65DE62219C8D400465444 /* UIView+M.swift */; };
 		F5B6FB052250CACF008ADD60 /* ProgressSlider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5B6FB042250CACF008ADD60 /* ProgressSlider.swift */; };
+		F5CA6006226C8DEB0094929B /* PagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5CA6005226C8DEB0094929B /* PagesViewController.swift */; };
 		F5D6319B220F02B4008AB5EE /* Albums.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D6319A220F02B4008AB5EE /* Albums.swift */; };
 		F5D6319E220F0472008AB5EE /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D6319D220F0472008AB5EE /* Environment.swift */; };
 		F5D631A0220F0FB3008AB5EE /* Logger.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D6319F220F0FB3008AB5EE /* Logger.swift */; };
@@ -100,6 +101,7 @@
 		F5B65DE42219C27F00465444 /* UIViewController+M.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+M.swift"; sourceTree = "<group>"; };
 		F5B65DE62219C8D400465444 /* UIView+M.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+M.swift"; sourceTree = "<group>"; };
 		F5B6FB042250CACF008ADD60 /* ProgressSlider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressSlider.swift; sourceTree = "<group>"; };
+		F5CA6005226C8DEB0094929B /* PagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PagesViewController.swift; sourceTree = "<group>"; };
 		F5D6319A220F02B4008AB5EE /* Albums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Albums.swift; sourceTree = "<group>"; };
 		F5D6319D220F0472008AB5EE /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		F5D6319F220F0FB3008AB5EE /* Logger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logger.swift; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 			isa = PBXGroup;
 			children = (
 				F5B65DDB2219B1E000465444 /* MainViewController.swift */,
+				F5CA6005226C8DEB0094929B /* PagesViewController.swift */,
 			);
 			path = Main;
 			sourceTree = "<group>";
@@ -696,6 +699,7 @@
 				F5B65DE52219C27F00465444 /* UIViewController+M.swift in Sources */,
 				F5DBE08B2247A83300E5CE44 /* Layout.swift in Sources */,
 				F55CE9A122231DBA001A882B /* Artist.swift in Sources */,
+				F5CA6006226C8DEB0094929B /* PagesViewController.swift in Sources */,
 				F5E3D9932222CA4D003EC178 /* AVPlayerItem+Rx.swift in Sources */,
 				F5B6FB052250CACF008ADD60 /* ProgressSlider.swift in Sources */,
 				F59D48EE2221C68500B23798 /* VolumeControl.swift in Sources */,
