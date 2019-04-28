@@ -32,7 +32,7 @@ class PagesTopView: UIView {
                     imageView.clipsToBounds = true
                     imageView.image = image
                     imageView.translatesAutoresizingMaskIntoConstraints = false
-                    imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: 1).isActive = true
+                    AutoLayout.constraint(imageView, .height, with: imageView, .width)
                     stackView.addArrangedSubview(imageView)
                 }
             }
@@ -55,7 +55,11 @@ class PagesTopView: UIView {
         stackView.distribution = .fillProportionally
         stackView.alignment = .center
         stackView.spacing = 8
-        constrain(subview: stackView, insets: UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20))
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(stackView)
+        AutoLayout.constraints(
+            stackView, with: self, [.top, .leadingConst(20), .trailingConst(-20), .bottom]
+        )
     }
     
     func updatePage(transition: PageTransition) {
@@ -67,11 +71,7 @@ class PagesTopView: UIView {
         let p = transition.progress
         let fromFrame = stackView.arrangedSubviews[fromIndex].frame
         let toFrame = stackView.arrangedSubviews[targetIndex].frame
-        let x = toFrame.origin.x * p + fromFrame.origin.x * (1 - p)
-        let y = toFrame.origin.y * p + fromFrame.origin.y * (1 - p)
-        let w = toFrame.size.width * p + fromFrame.size.width * (1 - p)
-        let h = toFrame.size.height * p + fromFrame.size.height * (1 - p)
-        let rect = CGRect(x: x, y: y, width: w, height: h)
+        let rect = interpolate(fromFrame: fromFrame, toFrame: toFrame, p: p)
         if p != 0 {
             setHighligtingView(frame: rect, highligtingIndex: targetIndex)
         }
@@ -115,6 +115,14 @@ class PagesTopView: UIView {
     }
 }
 
+func interpolate(fromFrame: CGRect, toFrame: CGRect, p: CGFloat) -> CGRect {
+    let x = toFrame.origin.x * p + fromFrame.origin.x * (1 - p)
+    let y = toFrame.origin.y * p + fromFrame.origin.y * (1 - p)
+    let w = toFrame.size.width * p + fromFrame.size.width * (1 - p)
+    let h = toFrame.size.height * p + fromFrame.size.height * (1 - p)
+    return CGRect(x: x, y: y, width: w, height: h)
+}
+
 class PagesViewController: UIViewController {
     private lazy var topView = PagesTopView()
     private lazy var scrollView = UIScrollView()
@@ -156,26 +164,24 @@ class PagesViewController: UIViewController {
         
         topView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(topView)
-        topView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        topView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        topView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-        topView.heightAnchor.constraint(equalToConstant: 64).isActive = true
+        AutoLayout.constraints(topView, with: view, [.top, .leading, .trailing])
+        AutoLayout.constraint(topView, .height(64))
         
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(scrollView)
-        scrollView.topAnchor.constraint(equalTo: topView.bottomAnchor).isActive = true
-        scrollView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        scrollView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        scrollView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        AutoLayout.constraint(scrollView, .top, with: topView, .bottom)
+        AutoLayout.constraints(scrollView, with: view, [.leading, .trailing, .bottom])
         
-        scrollView.constrain(subview: stackView)
-        stackView.heightAnchor.constraint(equalTo: scrollView.heightAnchor).isActive = true
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(stackView)
+        AutoLayout.constraints(scrollView, with: stackView, [.top, .leading, .trailing, .bottom])
+        AutoLayout.constraint(stackView, .height, with: scrollView, .height)
         
         for content in contentControllers {
             let vc = content.controller
             vc.view.translatesAutoresizingMaskIntoConstraints = false
             stackView.addArrangedSubview(vc.view)
-            vc.view.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
+            AutoLayout.constraint(vc.view, .width, with: view, .width)
         }
     }
     
@@ -219,18 +225,5 @@ extension PagesViewController: UIScrollViewDelegate {
             targetPageIndex: target,
             progress: progress)
         )
-    }
-}
-
-extension UIGestureRecognizer.State: CustomStringConvertible {
-    public var description: String {
-        switch self {
-        case .began: return "began"
-        case .cancelled: return "cancelled"
-        case .changed: return "changed"
-        case .ended: return "ended"
-        case .failed: return "failed"
-        case .possible: return "possible"
-        }
     }
 }

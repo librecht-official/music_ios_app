@@ -18,6 +18,7 @@ protocol LayoutComponent {
     func render() -> LayoutNode
 }
 
+@available(*, deprecated, message: "Yoga Layout is deprecated and will be removed later")
 enum Layout {
     
     // MARK: Composite Node
