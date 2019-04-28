@@ -11,6 +11,7 @@
 		F513A68F2275C3420019A8C5 /* ManualLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F513A68E2275C3420019A8C5 /* ManualLayout.swift */; };
 		F513A6912275C3840019A8C5 /* AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F513A6902275C3840019A8C5 /* AutoLayout.swift */; };
 		F513A6942275C4290019A8C5 /* GestureRecognizerExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F513A6932275C4290019A8C5 /* GestureRecognizerExt.swift */; };
+		F513A6962275EEFC0019A8C5 /* CoreGraphicsExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F513A6952275EEFC0019A8C5 /* CoreGraphicsExt.swift */; };
 		F5225D812222EB0400ABEF0B /* Swift+M.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5225D802222EB0400ABEF0B /* Swift+M.swift */; };
 		F53D25C722187772004BBD2B /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F53D25C622187772004BBD2B /* NavigationController.swift */; };
 		F55245382250E534006CA2A7 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F55245372250E534006CA2A7 /* Assets.xcassets */; };
@@ -86,6 +87,7 @@
 		F513A68E2275C3420019A8C5 /* ManualLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualLayout.swift; sourceTree = "<group>"; };
 		F513A6902275C3840019A8C5 /* AutoLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoLayout.swift; sourceTree = "<group>"; };
 		F513A6932275C4290019A8C5 /* GestureRecognizerExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GestureRecognizerExt.swift; sourceTree = "<group>"; };
+		F513A6952275EEFC0019A8C5 /* CoreGraphicsExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreGraphicsExt.swift; sourceTree = "<group>"; };
 		F5225D802222EB0400ABEF0B /* Swift+M.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Swift+M.swift"; sourceTree = "<group>"; };
 		F53D25C622187772004BBD2B /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		F55245372250E534006CA2A7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -444,6 +446,7 @@
 			isa = PBXGroup;
 			children = (
 				F5B65DDD2219B20700465444 /* BottomSheetController.swift */,
+				F513A6952275EEFC0019A8C5 /* CoreGraphicsExt.swift */,
 				F513A6932275C4290019A8C5 /* GestureRecognizerExt.swift */,
 				F5F176EB2210A8D0004DC65A /* GradientView.swift */,
 				F59D48E82221C62200B23798 /* MView.swift */,
@@ -728,6 +731,7 @@
 				F5CA6006226C8DEB0094929B /* PagesViewController.swift in Sources */,
 				F513A68F2275C3420019A8C5 /* ManualLayout.swift in Sources */,
 				F5E3D9932222CA4D003EC178 /* AVPlayerItem+Rx.swift in Sources */,
+				F513A6962275EEFC0019A8C5 /* CoreGraphicsExt.swift in Sources */,
 				F5B6FB052250CACF008ADD60 /* ProgressSlider.swift in Sources */,
 				F59D48EE2221C68500B23798 /* VolumeControl.swift in Sources */,
 				F5F176DE22106599004DC65A /* AlbumTracksViewController.swift in Sources */,

@@ -69,11 +69,17 @@ class PagesTopView: UIView {
         guard 0 <= targetIndex && targetIndex < stackView.arrangedSubviews.count else { return }
         
         let p = transition.progress
-        let fromFrame = stackView.arrangedSubviews[fromIndex].frame
-        let toFrame = stackView.arrangedSubviews[targetIndex].frame
-        let rect = interpolate(fromFrame: fromFrame, toFrame: toFrame, p: p)
         if p != 0 {
-            setHighligtingView(frame: rect, highligtingIndex: targetIndex)
+            let fromView = stackView.arrangedSubviews[fromIndex]
+            let toView = stackView.arrangedSubviews[targetIndex]
+            let fromFrame = calcHighligtingViewFrame(
+                rawFrame: fromView.frame, highligtingIndex: fromIndex
+            )
+            let toFrame = calcHighligtingViewFrame(
+                rawFrame: toView.frame, highligtingIndex: targetIndex
+            )
+            let frame = fromFrame.interpolate(toFrame: toFrame, p: p)
+            setHighligtingView(frame: frame)
         }
         if p > 0.9 {
             updateLabels(highlighted: targetIndex)
@@ -82,24 +88,24 @@ class PagesTopView: UIView {
     
     func set(highlightedViewIndex i: Int) {
         let view = stackView.arrangedSubviews[i]
-        setHighligtingView(frame: view.frame, highligtingIndex: i)
+        let frame = calcHighligtingViewFrame(rawFrame: view.frame, highligtingIndex: i)
+        setHighligtingView(frame: frame)
         updateLabels(highlighted: i)
     }
     
-    /*
-     TODO: Known issue:
-        Transition from label to imageview isn't smooth enough because of switching between different insets for title and icon.
-        Should take this inset into account when calculating frame by interpolating between "from" and "to".
-     */
-    private func setHighligtingView(frame: CGRect, highligtingIndex i: Int) {
+    private func setHighligtingView(frame: CGRect) {
+        highligtingView.frame = frame
+        highligtingView.layer.cornerRadius = highligtingView.frame.height / 2
+    }
+    
+    private func calcHighligtingViewFrame(rawFrame: CGRect, highligtingIndex i: Int) -> CGRect {
         let inset: (dx: CGFloat, dy: CGFloat)
         switch content[i] {
         case .title: inset = (dx: -6, dy: -4)
         case .icon: inset = (dx: -2, dy: -2)
         }
-        let rect = convert(frame, from: stackView)
-        highligtingView.frame = rect.insetBy(dx: inset.dx, dy: inset.dy)
-        highligtingView.layer.cornerRadius = highligtingView.frame.height / 2
+        let rect = convert(rawFrame, from: stackView)
+        return rect.insetBy(dx: inset.dx, dy: inset.dy)
     }
     
     private func updateLabels(highlighted: Int) {
@@ -113,14 +119,6 @@ class PagesTopView: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-func interpolate(fromFrame: CGRect, toFrame: CGRect, p: CGFloat) -> CGRect {
-    let x = toFrame.origin.x * p + fromFrame.origin.x * (1 - p)
-    let y = toFrame.origin.y * p + fromFrame.origin.y * (1 - p)
-    let w = toFrame.size.width * p + fromFrame.size.width * (1 - p)
-    let h = toFrame.size.height * p + fromFrame.size.height * (1 - p)
-    return CGRect(x: x, y: y, width: w, height: h)
 }
 
 class PagesViewController: UIViewController {
