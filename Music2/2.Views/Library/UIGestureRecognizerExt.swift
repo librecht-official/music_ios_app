@@ -1,5 +1,5 @@
 //
-//  GestureRecognizerExt.swift
+//  UIGestureRecognizerExt.swift
 //  Music2
 //
 //  Created by Vladislav Librecht on 28.04.2019.

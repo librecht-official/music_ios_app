@@ -135,9 +135,9 @@ class PagesViewController: UIViewController {
         let controller: UIViewController
     }
     private lazy var contentControllers = [
-        Content(preview: .title("Explore"), controller: UIViewController()),
-        Content(preview: .title("Playlists"), controller: UIViewController()),
-        Content(preview: .title("Favorites"), controller: UIViewController()),
+        Content(preview: .title(L10n.Main.Pages.Top.explore), controller: UIViewController()),
+        Content(preview: .title(L10n.Main.Pages.Top.playlists), controller: UIViewController()),
+        Content(preview: .title(L10n.Main.Pages.Top.favorites), controller: UIViewController()),
         Content(preview: .icon(Asset.profileMock.image), controller: UIViewController()),
     ]
     var viewControllers: [UIViewController] {

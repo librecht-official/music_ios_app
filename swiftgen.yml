@@ -1,5 +1,11 @@
 xcassets:
-  inputs: Music2/Resources/Assets.xcassets
+  inputs: Music2/6.Resources/Assets.xcassets
   outputs:
     templateName: swift4
-    output: Music2/Resources/Assets.auto.swift
+    output: Music2/6.Resources/Assets.auto.swift
+
+strings:
+  inputs: Music2/6.Resources/en.lproj/Localizable.strings
+  outputs:
+    templateName: structured-swift4
+    output: Music2/6.Resources/Strings.auto.swift
