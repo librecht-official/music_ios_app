@@ -9,3 +9,6 @@
 "Main.Pages.Top.Explore" = "Explore";
 "Main.Pages.Top.Playlists" = "Playlists";
 "Main.Pages.Top.Favorites" = "Favorites";
+
+"Explore.Section.Recommendations" = "Recommended to you";
+"Explore.Section.Trending" = "Trending";

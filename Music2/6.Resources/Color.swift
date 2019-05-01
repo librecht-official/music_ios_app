@@ -9,25 +9,37 @@
 import UIKit
 
 enum Color {
-    /// #FF33FF
-    case primaryPurple
-    /// #FFFF33
-    case primaryYellow
-    /// #33FFFF
+    /// #2687FB
     case primaryBlue
     
     /// UIColor.white
     case white
+    
+    /// #8E8E93
+    case lightGrayText
+    
+    /// #7D7D83
+    case jumboGray
+    
     /// #EEEEEE
     case altoGray
+    
     /// #D8D8D8
     case galleryGray
+    
     /// UIColor.lightGray (rgb: 2/3 a: 1)
     case lightGray
+    
     /// UIColor(white: 0, alpha: 0.35)
     case gray
+    
     /// #0F0F0F
+    @available(*, deprecated)
     case blackBackground
+    
+    /// UIColor.black
+    case blackText
+    
     /// UIColor.black
     case black
 }
@@ -35,15 +47,14 @@ enum Color {
 extension Color {
     var uiColor: UIColor {
         switch self {
-        case .primaryPurple:
-            return UIColor(rgb: 0xFF33FF)
-        case .primaryYellow:
-            return UIColor(rgb: 0xFFFF33)
         case .primaryBlue:
             return UIColor(rgb: 0x2687FB)
-            
         case .white:
             return UIColor.white
+        case .lightGrayText:
+            return UIColor(rgb: 0x8E8E93)
+        case .jumboGray:
+            return UIColor(rgb: 0x7D7D83)
         case .altoGray:
             return UIColor(rgb: 0xEEEEEE)
         case .galleryGray:
@@ -54,7 +65,7 @@ extension Color {
             return UIColor(white: 0, alpha: 0.35)
         case .blackBackground:
             return UIColor(rgb: 0x0F0F0F)
-        case .black:
+        case .blackText, .black:
             return UIColor.black
         }
     }

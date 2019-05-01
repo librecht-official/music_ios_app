@@ -12,6 +12,15 @@ import Foundation
 // swiftlint:disable nesting type_body_length type_name
 internal enum L10n {
 
+  internal enum Explore {
+    internal enum Section {
+      /// Recommended to you
+      internal static let recommendations = L10n.tr("Localizable", "Explore.Section.Recommendations")
+      /// Trending
+      internal static let trending = L10n.tr("Localizable", "Explore.Section.Trending")
+    }
+  }
+
   internal enum Main {
     internal enum Pages {
       internal enum Top {
