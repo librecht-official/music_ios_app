@@ -9,11 +9,13 @@
 import UIKit
 import YogaKit
 
+@available(*, deprecated)
 protocol LayoutNode {
     @discardableResult
     func configureLayout() -> UIView
 }
 
+@available(*, deprecated)
 protocol LayoutComponent {
     func render() -> LayoutNode
 }
@@ -150,28 +152,6 @@ extension Layout {
         coordinator.animate(alongsideTransition: { _ in
             view.yoga.applyLayout(preservingOrigin: true)
         }, completion: nil)
-    }
-}
-
-// MARK: - Style Helpers
-
-extension Layout.Style {
-    static func +(lhs: Layout.Style<V>, rhs: Layout.Style<V>) -> Layout.Style<V> {
-        return Layout.Style<V>(layout: {
-            lhs.layout($0)
-            rhs.layout($0)
-        }, styling: {
-            lhs.styling?($0)
-            rhs.styling?($0)
-        })
-    }
-    
-    func and(styling: @escaping StylingFunction<V>) -> Layout.Style<V> {
-        return self + Layout.Style<V>(styling: styling)
-    }
-    
-    func and(layout: @escaping LayoutFunction) -> Layout.Style<V> {
-        return self + Layout.Style<V>(layout: layout)
     }
 }
 

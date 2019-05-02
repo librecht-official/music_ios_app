@@ -146,7 +146,6 @@ final class PagesViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         // TODO: remove
-        contentControllers[0].controller.view.backgroundColor = UIColor.red
         contentControllers[1].controller.view.backgroundColor = UIColor.green
         contentControllers[2].controller.view.backgroundColor = UIColor.blue
         

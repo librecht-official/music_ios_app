@@ -9,14 +9,12 @@
 import UIKit
 
 enum Font {
-    // TODO: remove this 3. Move them to some style
     /// system 36, bold
     case barTitle
     /// system regular 17
     case regularCaption
     /// system regular 14
     case smallCaption
-    
     
     /// system bold
     case bold(Float)

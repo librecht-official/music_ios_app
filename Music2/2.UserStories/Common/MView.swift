@@ -27,6 +27,7 @@ class MView: UIView {
     }
 }
 
+@available(*, deprecated)
 class LayoutView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()

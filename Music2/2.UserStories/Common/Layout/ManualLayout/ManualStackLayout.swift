@@ -129,25 +129,3 @@ func stackRow(
     
     return result
 }
-
-func testStackLayout() {
-    testStackColumnLayout()
-}
-
-func testStackColumnLayout() {
-    print("\ntestStackColumnLayout")
-    let bounds = CGRect(x: 0, y: 0, width: 200, height: 400)
-    
-    var v1: CGRect = .zero
-    var v2: CGRect = .zero
-    var v3: CGRect = .zero
-    stackColumn(
-        alignment: .fill, spacing: 8, [
-            StackItem({ v1 = $0 }, length: .abs(64), top: 8, bottom: 0, leading: 8, trailing: 8),
-            StackItem({ v2 = $0 }, length: .weight(1), top: 0, bottom: 20, leading: 16, trailing: 16),
-            StackItem({ v3 = $0 }, length: .weight(2), top: 0, bottom: 0, leading: 20, trailing: 0),
-            ],
-        inFrame: bounds
-    )
-    print(v1, v2, v3)
-}

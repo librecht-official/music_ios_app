@@ -154,7 +154,7 @@ func layout(_ rules: LayoutRules, inFrame frame: CGRect) -> CGRect {
 }
 
 /**
- aspectRatio = width / height
+ Assumes bounds.origin == { 0, 0 }. aspectRatio = width / height
  */
 func layout(aspectRatio: CGFloat, _ sup: AspectRatioSupplementingLayoutRule, inBounds bounds: CGRect) -> CGRect {
     switch sup {
@@ -185,6 +185,13 @@ func layout(aspectRatio: CGFloat, _ sup: AspectRatioSupplementingLayoutRule, inB
         }
         return CGRect(x: x, y: y, width: w, height: h)
     }
+}
+
+/**
+ Assumes bounds.origin might not be == { 0, 0 }. aspectRatio = width / height
+ */
+func layout(aspectRatio: CGFloat, _ sup: AspectRatioSupplementingLayoutRule, inFrame frame: CGRect) -> CGRect {
+    return layout(aspectRatio: aspectRatio, sup, inBounds: frame.bounds).offsetBy(dx: frame.origin.x, dy: frame.origin.y)
 }
 
 extension CGRect {

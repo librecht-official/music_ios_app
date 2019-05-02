@@ -9,23 +9,26 @@
 import UIKit
 
 class MainViewController: UIViewController {
+    struct Style {
+        let bottomSheetMinHeight = CGFloat(100)
+    }
+    var style = Style()
+    
+    private lazy var pagesViewController = PagesViewController()
+    
+    private lazy var audioPlayerController = AudioPlayerViewController()
+    private lazy var bottomSheetController = BottomSheetController(
+        bottomSheet: bottomSheet,
+        container: view,
+        bottomSheetMaxHeight: UIScreen.main.bounds.height * 0.85,
+        bottomSheetMinHeight: style.bottomSheetMinHeight
+    )
     private lazy var bottomSheet: UIView = {
         let view = GradientView(top: Color.altoGray.uiColor, bottom: Color.lightGray.uiColor)
         view.layer.cornerRadius = 20
         view.layer.masksToBounds = true
         return view
     }()
-    private lazy var audioPlayerController = AudioPlayerViewController()
-    
-    private lazy var bottomSheetController = BottomSheetController(
-        bottomSheet: bottomSheet,
-        container: view,
-        bottomSheetMaxHeight: UIScreen.main.bounds.height * 0.85,
-        bottomSheetMinHeight: 100
-    )
-    
-//    private lazy var albumsListController = NavigationController(rootViewController: AlbumsListViewController())
-    private lazy var pagesViewController = PagesViewController()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,7 +36,7 @@ class MainViewController: UIViewController {
         
         bottomSheetController.delegate = self
         
-        pagesViewController.additionalSafeAreaInsets.bottom += 100
+        pagesViewController.additionalSafeAreaInsets.bottom += style.bottomSheetMinHeight
         embed(child: pagesViewController)
         view.constrain(
             subview: pagesViewController.view,
