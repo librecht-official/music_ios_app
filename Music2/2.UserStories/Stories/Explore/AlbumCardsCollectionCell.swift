@@ -17,6 +17,7 @@ final class AlbumCardsCollectionCell: UITableViewCell, Reusable {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
         contentView.addSubview(collectionView)
         collectionLayout.scrollDirection = .horizontal
         collectionLayout.estimatedItemSize = AlbumCardsCollectionLayout.itemSize(forContainerWidth: UIScreen.main.bounds.width)

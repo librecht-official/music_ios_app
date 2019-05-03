@@ -26,6 +26,7 @@ final class PagesTopView: UIView {
                     label.font = Font.bold(20).uiFont
                     label.textAlignment = .center
                     label.translatesAutoresizingMaskIntoConstraints = false
+                    label.adjustsFontSizeToFitWidth = true
                     stackView.addArrangedSubview(label)
                 case .icon(let image):
                     let imageView = UIImageView()
@@ -164,7 +165,9 @@ final class PagesViewController: UIViewController {
         
         view.addSubview(scrollView)
         AutoLayout.constraint(scrollView, .top, with: topView, .bottom)
-        AutoLayout.constraints(scrollView, with: view, [.leading(0), .trailing(0), .bottom(0)])
+        AutoLayout.constraints(view, with: scrollView, [
+            .leading(0), .trailing(0), .safeAreaBottom(0)
+        ])
         
         scrollView.addSubview(stackView)
         AutoLayout.constraints(scrollView, with: stackView, [

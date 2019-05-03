@@ -29,6 +29,8 @@ final class ExploreViewController: UIViewController {
     
     private var searchController: UISearchController!
     private lazy var tableView = UITableView()
+    private lazy var activityIndicator = loadingIndicator()
+    private lazy var refreshControl = UIRefreshControl()
     
     private let disposeBag = DisposeBag()
     
@@ -52,29 +54,56 @@ final class ExploreViewController: UIViewController {
         configureUI()
         
         let tableView = self.tableView
+        let rc = self.refreshControl
         
         let bindUI: Feedback = bind(self) { (self, state) -> (Bindings<Command>) in
             let stateToUI = [
                 state.map { $0.sections }.distinctUntilChanged()
-                    .drive(tableView.rx.items(dataSource: self.dataSource))
+                    .drive(tableView.rx.items(dataSource: self.dataSource)),
+                state.map { $0.showLoading }.drive(self.activityIndicator.rx.isAnimating),
+                state.map { $0.showLoading }.drive(tableView.rx.isHidden),
+                state.map { $0.showLoading }.filter { !$0 }.drive(rc.rx.isRefreshing)
             ]
             let uiToState = [
-                tableView.rx.itemSelected.asSignal()
-                    .do(onNext: deselectItem(tableView))
-                    .map { Command.didSelectItem(index: $0.row, section: $0.section) }
+                self.itemSelected(in: tableView),
+                rc.rx.pullToRefreshSignal.map { Command.reFetch }
             ]
             return Bindings(subscriptions: stateToUI, mutations: uiToState)
+        }
+        
+        let bindAPI: Feedback = react(query: { $0.loadingRequest }) { _ -> Signal<Command> in
+            return Environment.current.api.music.explore().asSignal()
+                .map { Command.didFetch($0) }
         }
         
         Driver.system(
             initialState: Explore.initialState,
             reduce: Explore.reduce,
-            feedback: bindUI
+            feedback: bindUI, bindAPI
             )
             .drive()
             .disposed(by: disposeBag)
         
         tableView.rx.setDelegate(self).disposed(by: disposeBag)
+    }
+    
+    private func itemSelected(in tableView: UITableView) -> Signal<Command> {
+        return tableView.rx.itemSelected.asSignal()
+            .do(onNext: deselectItem(tableView))
+            .map { [unowned self] ip -> Command? in
+                return self.albumInRow(at: ip).map { Command.didSelectAlbum($0) }
+            }
+            .filterNil()
+    }
+    
+    private func albumInRow(at indexPath: IndexPath) -> Album? {
+        if let item = dataSource.item(at: indexPath) {
+            switch item {
+            case let .albumRow(album): return album
+            case .albumCardsCollection: return nil
+            }
+        }
+        return nil
     }
 }
 
@@ -95,9 +124,7 @@ extension ExploreViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        guard let item = dataSource.sectionModels
-            .element(at: indexPath.section)?.items
-            .element(at: indexPath.row) else {
+        guard let item = dataSource.item(at: indexPath) else {
             return 0
         }
         switch item {
@@ -118,14 +145,19 @@ extension ExploreViewController: UITableViewDelegate {
 private extension ExploreViewController {
     func prepareLayout() {
         view.addSubview(tableView)
+        view.addSubview(activityIndicator)
+        tableView.refreshControl = refreshControl
         AutoLayout.constraints(
             view, with: tableView,
             [.safeAreaTop(0), .leading(0), .trailing(0), .bottom(0)]
         )
+        AutoLayout.constraint(view, .centerX, with: activityIndicator, .centerX)
+        AutoLayout.constraint(view, .centerY, with: activityIndicator, .centerY)
     }
     
     func configureUI() {
         view.backgroundColor = Color.white.uiColor
+        refreshControl.backgroundColor = Color.white.uiColor
         tableView.register(headerFooterViewType: TitleTableHeaderView.self)
         tableView.register(cellType: AlbumRowCell.self)
         tableView.register(cellType: AlbumCardsCollectionCell.self)

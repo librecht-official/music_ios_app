@@ -14,6 +14,8 @@ internal enum L10n {
 
   internal enum Explore {
     internal enum Section {
+      /// Popular
+      internal static let popular = L10n.tr("Localizable", "Explore.Section.Popular")
       /// Recommended to you
       internal static let recommendations = L10n.tr("Localizable", "Explore.Section.Recommendations")
       /// Trending

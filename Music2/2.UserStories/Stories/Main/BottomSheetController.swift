@@ -15,7 +15,7 @@ protocol BottomSheetControllerDelegate: AnyObject {
     func bottomSheetControllerAnimatingLastKeyframeState(to state: BottomSheetController.State)
 }
 
-class BottomSheetController {
+final class BottomSheetController {
     enum State {
         case closed
         case open
@@ -50,7 +50,15 @@ class BottomSheetController {
     private let bottomSheet: UIView
     private let container: UIView
     private let bottomSheetOffset: CGFloat
-    private let bottomSheetMinHeight: CGFloat
+    /// Minimum visible height of the bottom sheet
+    var bottomSheetMinHeight: CGFloat {
+        didSet {
+            bottomSheetHeightConstraint?.constant = bottomSheetTotalHeight
+        }
+    }
+    private var bottomSheetTotalHeight: CGFloat {
+        return bottomSheetOffset + bottomSheetMinHeight
+    }
     
     private lazy var overlayView: UIView = {
         let view = UIView()
@@ -60,6 +68,7 @@ class BottomSheetController {
     }()
     
     private var bottomConstraint: NSLayoutConstraint!
+    private var bottomSheetHeightConstraint: NSLayoutConstraint!
     private func prepareConstraints() {
         overlayView.translatesAutoresizingMaskIntoConstraints = false
         container.addSubview(overlayView)
@@ -74,7 +83,8 @@ class BottomSheetController {
         bottomSheet.trailingAnchor.constraint(equalTo: container.trailingAnchor).isActive = true
         bottomConstraint = bottomSheet.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: bottomSheetOffset)
         bottomConstraint.isActive = true
-        bottomSheet.heightAnchor.constraint(equalToConstant: bottomSheetOffset + bottomSheetMinHeight).isActive = true
+        bottomSheetHeightConstraint = bottomSheet.heightAnchor.constraint(equalToConstant: bottomSheetTotalHeight)
+        bottomSheetHeightConstraint.isActive = true
     }
     
     // MARK: - Animation

@@ -20,13 +20,13 @@ class MainViewController: UIViewController {
     private lazy var bottomSheetController = BottomSheetController(
         bottomSheet: bottomSheet,
         container: view,
-        bottomSheetMaxHeight: UIScreen.main.bounds.height * 0.85,
-        bottomSheetMinHeight: style.bottomSheetMinHeight
+        bottomSheetMaxHeight: min(UIScreen.main.bounds.height * 0.85, 600),
+        bottomSheetMinHeight: style.bottomSheetMinHeight + view.safeAreaInsets.bottom
     )
     private lazy var bottomSheet: UIView = {
         let view = GradientView(top: Color.altoGray.uiColor, bottom: Color.lightGray.uiColor)
         view.layer.cornerRadius = 20
-        view.layer.masksToBounds = true
+        view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         return view
     }()
     
@@ -51,6 +51,11 @@ class MainViewController: UIViewController {
         super.viewWillAppear(animated)
         view.layoutIfNeeded()
         bottomSheetController.prepare()
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        bottomSheetController.bottomSheetMinHeight = style.bottomSheetMinHeight + view.safeAreaInsets.bottom
     }
 }
 

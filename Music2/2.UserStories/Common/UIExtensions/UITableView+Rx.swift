@@ -31,3 +31,9 @@ let deselectItem: (UITableView) -> (IndexPath) -> () = { tableView in
         tableView.deselectRow(at: $0, animated: true)
     }
 }
+
+extension Reactive where Base: UIRefreshControl {
+    var pullToRefreshSignal: Signal<Void> {
+        return self.controlEvent(UIControlEvents.valueChanged).asSignal()
+    }
+}

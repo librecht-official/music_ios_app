@@ -10,19 +10,21 @@ import Moya
 import Result
 
 struct Logger: PluginType {
+    let log: APIConfiguration.Logging?
+    
     func willSend(_ request: RequestType, target: TargetType) {
         guard let method = request.request?.httpMethod,
             let url = request.request?.url?.absoluteString else {
-                print("🌐--> \(String(describing: request.request))")
+                log?("🌐--> \(String(describing: request.request))")
                 return
         }
-        print("🌐 <-- \(method) \(url)\n\(request.request?.httpBody.flatMap(String.init) ?? "")")
+        log?("🌐 <-- \(method) \(url)\n\(request.request?.httpBody.flatMap(String.init) ?? "")")
     }
     
     func didReceive(_ result: Result<Moya.Response, MoyaError>, target: TargetType) {
-        print("🌐 --> \(result) (\(target.method) \(target.path))")
+        log?("🌐 --> \(result) (\(target.method) \(target.path))")
         if case Result<Moya.Response, MoyaError>.failure(let error) = result {
-            print(error)
+            log?(error)
         }
     }
 }

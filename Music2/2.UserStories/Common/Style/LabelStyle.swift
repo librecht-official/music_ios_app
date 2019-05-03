@@ -24,5 +24,6 @@ extension UILabel {
         font = style.font.uiFont
         textColor = style.textColor.uiColor
         textAlignment = style.alignment
+        adjustsFontSizeToFitWidth = true
     }
 }

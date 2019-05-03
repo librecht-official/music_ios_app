@@ -8,11 +8,26 @@
 
 import Foundation
 
-public struct Configuration {
-    public let baseURL: URL
-    public let headers = ["Content-type": "application/json"]
-    public let decoder = JSONDecoder()
-    public let encoder = JSONEncoder()
+public struct APIConfiguration {
+    public typealias Headers = [String: String]
+    public typealias Logging = (Any) -> ()
     
-    public static let `default` = Configuration(baseURL: URL(string: "http://192.168.0.3:8000")!)
+    public let baseURL: URL
+    public let headers: Headers
+    public let decoder: JSONDecoder
+    public let encoder: JSONEncoder
+    public let logger: Logging?
+    
+    public init(baseURL: URL,
+         headers: Headers = ["Content-type": "application/json"],
+         decoder: JSONDecoder = JSONDecoder(),
+         encoder: JSONEncoder = JSONEncoder(),
+         logger: Logging?) {
+        
+        self.baseURL = baseURL
+        self.headers = headers
+        self.decoder = decoder
+        self.encoder = encoder
+        self.logger = logger
+    }
 }
