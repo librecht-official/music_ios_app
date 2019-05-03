@@ -12,6 +12,7 @@ import Foundation
 
 struct ExploreState: Transformable {
     var showLoading: Bool
+    var nothingHere: Bool
     var sections: [ExploreSection]
     
     var shouldLoadPage: Bool
@@ -45,6 +46,7 @@ enum ExploreCommand {
 enum Explore {
     static let initialState = ExploreState(
         showLoading: true,
+        nothingHere: false,
         sections: [],
         shouldLoadPage: true,
         shouldDisplayError: nil,
@@ -56,15 +58,19 @@ enum Explore {
         switch command {
         case .reFetch:
             newState.shouldLoadPage = true
+            newState.showLoading = newState.nothingHere
+            newState.nothingHere = false
         case let .didFetch(.success(response)):
             newState.sections = buildSections(fromResponse: response)
             newState.shouldLoadPage = false
             newState.shouldDisplayError = nil
             newState.showLoading = false
+            newState.nothingHere = newState.sections.allSatisfy { $0.items.isEmpty }
         case let .didFetch(.failure(error)):
             newState.shouldLoadPage = false
             newState.shouldDisplayError = error.localizedDescription
             newState.showLoading = false
+            newState.nothingHere = state.sections.allSatisfy { $0.items.isEmpty }
         case let .didSelectAlbum(album):
             newState.shouldOpenAlbum = album
         case .didOpenAlbum:

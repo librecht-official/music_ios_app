@@ -58,7 +58,7 @@ final class PagesTopView: UIView {
         stackView.spacing = 8
         addSubview(stackView)
         AutoLayout.constraints(
-            stackView, with: self, [.top(0), .leading(20), .trailing(-20), .bottom(0)]
+            self, with: stackView, [.top(0), .leading(-20), .trailing(20), .bottom(0)]
         )
     }
     
@@ -135,10 +135,22 @@ final class PagesViewController: UIViewController {
         let controller: UIViewController
     }
     private lazy var contentControllers = [
-        Content(preview: .title(L10n.Main.Pages.Top.explore), controller: ExploreViewController()),
-        Content(preview: .title(L10n.Main.Pages.Top.playlists), controller: UIViewController()),
-        Content(preview: .title(L10n.Main.Pages.Top.favorites), controller: UIViewController()),
-        Content(preview: .icon(Asset.profileMock.image), controller: UIViewController()),
+        Content(
+            preview: .title(L10n.Main.Pages.Top.explore),
+            controller: ExploreViewController()
+        ),
+        Content(
+            preview: .title(L10n.Main.Pages.Top.playlists),
+            controller: InformationViewController(viewModel: InformationViewModel.nothingHere)
+        ),
+        Content(
+            preview: .title(L10n.Main.Pages.Top.favorites),
+            controller: InformationViewController(viewModel: InformationViewModel.nothingHere)
+        ),
+        Content(
+            preview: .icon(Asset.profileMock.image),
+            controller: InformationViewController(viewModel: InformationViewModel.nothingHere)
+        ),
     ]
     var viewControllers: [UIViewController] {
         return contentControllers.map { $0.controller }
@@ -146,10 +158,6 @@ final class PagesViewController: UIViewController {
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-        // TODO: remove
-        contentControllers[1].controller.view.backgroundColor = UIColor.green
-        contentControllers[2].controller.view.backgroundColor = UIColor.blue
-        
         topView.content = contentControllers.map { $0.preview }
         
         scrollView.isPagingEnabled = true

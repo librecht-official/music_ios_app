@@ -31,6 +31,7 @@ final class ExploreViewController: UIViewController {
     private lazy var tableView = UITableView()
     private lazy var activityIndicator = loadingIndicator()
     private lazy var refreshControl = UIRefreshControl()
+    private lazy var nothingHereView = InformationView(viewModel: InformationViewModel.nothingHere)
     
     private let disposeBag = DisposeBag()
     
@@ -55,14 +56,17 @@ final class ExploreViewController: UIViewController {
         
         let tableView = self.tableView
         let rc = self.refreshControl
+        let activityIndicator = self.activityIndicator
+        let nothingHereView = self.nothingHereView
         
         let bindUI: Feedback = bind(self) { (self, state) -> (Bindings<Command>) in
             let stateToUI = [
                 state.map { $0.sections }.distinctUntilChanged()
                     .drive(tableView.rx.items(dataSource: self.dataSource)),
-                state.map { $0.showLoading }.drive(self.activityIndicator.rx.isAnimating),
+                state.map { $0.showLoading }.drive(activityIndicator.rx.isAnimating),
                 state.map { $0.showLoading }.drive(tableView.rx.isHidden),
-                state.map { $0.showLoading }.filter { !$0 }.drive(rc.rx.isRefreshing)
+                state.map { $0.showLoading }.filter { !$0 }.drive(rc.rx.isRefreshing),
+                state.map { !$0.nothingHere }.drive(nothingHereView.rx.isHidden),
             ]
             let uiToState = [
                 self.itemSelected(in: tableView),
@@ -146,6 +150,7 @@ private extension ExploreViewController {
     func prepareLayout() {
         view.addSubview(tableView)
         view.addSubview(activityIndicator)
+        view.addSubview(nothingHereView)
         tableView.refreshControl = refreshControl
         AutoLayout.constraints(
             view, with: tableView,
@@ -153,11 +158,16 @@ private extension ExploreViewController {
         )
         AutoLayout.constraint(view, .centerX, with: activityIndicator, .centerX)
         AutoLayout.constraint(view, .centerY, with: activityIndicator, .centerY)
+        AutoLayout.constraints(
+            view, with: nothingHereView,
+            [.safeAreaTop(0), .leading(0), .trailing(0), .safeAreaBottom(0)]
+        )
     }
     
     func configureUI() {
         view.backgroundColor = Color.white.uiColor
         refreshControl.backgroundColor = Color.white.uiColor
+        nothingHereView.isUserInteractionEnabled = false
         tableView.register(headerFooterViewType: TitleTableHeaderView.self)
         tableView.register(cellType: AlbumRowCell.self)
         tableView.register(cellType: AlbumCardsCollectionCell.self)

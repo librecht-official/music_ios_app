@@ -36,6 +36,7 @@
 		F55CAFF6227C19E100A9D502 /* Parser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F55CAFF5227C19E100A9D502 /* Parser.swift */; };
 		F55CAFF8227C1EED00A9D502 /* ExploreResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = F55CAFF7227C1EED00A9D502 /* ExploreResponse.swift */; };
 		F55CAFFA227C58E000A9D502 /* Printing.swift in Sources */ = {isa = PBXBuildFile; fileRef = F55CAFF9227C58E000A9D502 /* Printing.swift */; };
+		F55CAFFD227C740800A9D502 /* InformationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F55CAFFC227C740800A9D502 /* InformationView.swift */; };
 		F55CE9A122231DBA001A882B /* Artist.swift in Sources */ = {isa = PBXBuildFile; fileRef = F55CE9A022231DBA001A882B /* Artist.swift */; };
 		F55CE9A322231DD9001A882B /* MusicTrack.swift in Sources */ = {isa = PBXBuildFile; fileRef = F55CE9A222231DD9001A882B /* MusicTrack.swift */; };
 		F587E3E1222C36C600915685 /* AudioPlayerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F587E3E0222C36C600915685 /* AudioPlayerTests.swift */; };
@@ -130,6 +131,7 @@
 		F55CAFF5227C19E100A9D502 /* Parser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Parser.swift; sourceTree = "<group>"; };
 		F55CAFF7227C1EED00A9D502 /* ExploreResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExploreResponse.swift; sourceTree = "<group>"; };
 		F55CAFF9227C58E000A9D502 /* Printing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Printing.swift; sourceTree = "<group>"; };
+		F55CAFFC227C740800A9D502 /* InformationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InformationView.swift; sourceTree = "<group>"; };
 		F55CE9A022231DBA001A882B /* Artist.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Artist.swift; sourceTree = "<group>"; };
 		F55CE9A222231DD9001A882B /* MusicTrack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MusicTrack.swift; sourceTree = "<group>"; };
 		F587E3E0222C36C600915685 /* AudioPlayerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayerTests.swift; sourceTree = "<group>"; };
@@ -300,6 +302,7 @@
 		F55CAFFB227C733D00A9D502 /* Information */ = {
 			isa = PBXGroup;
 			children = (
+				F55CAFFC227C740800A9D502 /* InformationView.swift */,
 			);
 			path = Information;
 			sourceTree = "<group>";
@@ -868,6 +871,7 @@
 				F55CAFE9227A247200A9D502 /* ButtonStyles.swift in Sources */,
 				F5F176E122106970004DC65A /* Font.swift in Sources */,
 				F59D48F22221D40800B23798 /* AVPlayer+Rx.swift in Sources */,
+				F55CAFFD227C740800A9D502 /* InformationView.swift in Sources */,
 				F5F100A12219CB5A00C649E4 /* AudioPlayer.swift in Sources */,
 				F513A69D2275F4B70019A8C5 /* Strings.auto.swift in Sources */,
 				F5F176E322108F87004DC65A /* AlbumTracks.swift in Sources */,

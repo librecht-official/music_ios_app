@@ -13,6 +13,8 @@ import Foundation
 internal enum L10n {
 
   internal enum Explore {
+    /// Nothing here for now :(
+    internal static let nothingHere = L10n.tr("Localizable", "Explore.NothingHere")
     internal enum Section {
       /// Popular
       internal static let popular = L10n.tr("Localizable", "Explore.Section.Popular")
