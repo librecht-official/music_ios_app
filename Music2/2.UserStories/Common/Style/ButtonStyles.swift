@@ -23,6 +23,12 @@ struct IconButtonStyle {
         self.tintColor = tintColor
         self.alpha = alpha
     }
+    
+    static let like = IconButtonStyle(
+        normalIcon: Asset.likeUnselected26x23,
+        selectedIcon: Asset.likeSelected26x23,
+        tintColor: Color.primaryBlue
+    )
 }
 
 extension UIButton {

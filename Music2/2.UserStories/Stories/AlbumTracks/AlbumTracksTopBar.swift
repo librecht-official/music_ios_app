@@ -10,7 +10,7 @@ import UIKit
 
 class AlbumTracksTopBar: UIView {
     private lazy var effect = UIVisualEffectView(
-        effect: UIBlurEffect(style: .light)
+        effect: UIBlurEffect(style: .regular)
     )
     lazy var titleLabel = UILabel()
     lazy var backButton = UIButton(type: .system)

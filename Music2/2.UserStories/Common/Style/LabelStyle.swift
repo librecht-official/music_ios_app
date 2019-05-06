@@ -25,5 +25,6 @@ extension UILabel {
         textColor = style.textColor.uiColor
         textAlignment = style.alignment
         adjustsFontSizeToFitWidth = true
+        minimumScaleFactor = 0.5
     }
 }

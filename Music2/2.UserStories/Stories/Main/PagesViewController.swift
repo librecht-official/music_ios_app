@@ -126,6 +126,15 @@ final class PagesViewController: UIViewController {
     private lazy var scrollView = UIScrollView()
     private lazy var stackView = UIStackView()
     
+    // TODO: move to PagesNavigator
+    private lazy var exploreNavigator = ExploreNavigation(controller: self.navigationController!)
+    
+    func exploreViewController() -> ExploreViewController {
+        let vc = ExploreViewController()
+        vc.navigator = exploreNavigator
+        return vc
+    }
+    
     struct Content {
         enum TopPreview {
             case title(String)
@@ -137,7 +146,7 @@ final class PagesViewController: UIViewController {
     private lazy var contentControllers = [
         Content(
             preview: .title(L10n.Main.Pages.Top.explore),
-            controller: ExploreViewController()
+            controller: exploreViewController()
         ),
         Content(
             preview: .title(L10n.Main.Pages.Top.playlists),
@@ -168,7 +177,7 @@ final class PagesViewController: UIViewController {
         stackView.distribution = .fillEqually
         
         view.addSubview(topView)
-        AutoLayout.constraints(topView, with: view, [.top(0), .leading(0), .trailing(0)])
+        AutoLayout.constraints(view, with: topView, [.safeAreaTop(0), .leading(0), .trailing(0)])
         AutoLayout.constraint(topView, .height(64))
         
         view.addSubview(scrollView)
@@ -190,6 +199,8 @@ final class PagesViewController: UIViewController {
                 AutoLayout.constraint(vc.view, .width, with: view, .width)
             }
         }
+        // TODO: this is needed as this vc is added as root to UINavController. Think what can be done with this. Perhaps change AutoLayout API to set translatesAutoresizingMaskIntoConstraints = false only for the rhs controller. Or abandon to use AutoLayout at all.
+        view.translatesAutoresizingMaskIntoConstraints = true
     }
     
     override func viewWillAppear(_ animated: Bool) {

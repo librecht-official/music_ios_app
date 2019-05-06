@@ -12,12 +12,19 @@ class NavigationController: UINavigationController {
     override func viewDidLoad() {
         super.viewDidLoad()
         delegate = self
-        navigationBar.isTranslucent = true
+//        navigationBar.isTranslucent = true
         navigationBar.tintColor = Color.white.uiColor
         navigationBar.barTintColor = Color.white.uiColor
         navigationBar.titleTextAttributes = [
             NSAttributedString.Key.foregroundColor: Color.white.uiColor
         ]
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        viewControllers.forEach { vc in
+            vc.additionalSafeAreaInsets = self.additionalSafeAreaInsets
+        }
     }
 }
 
@@ -32,11 +39,11 @@ extension NavigationController: UINavigationControllerDelegate {
         
         viewController.additionalSafeAreaInsets = additionalSafeAreaInsets
         
-        if let custom = viewController as? NavigationBarCustomization, custom.navigationBarShouldBeHidden {
-            setNavigationBarHidden(true, animated: animated)
-        }
-        else {
-            setNavigationBarHidden(false, animated: animated)
-        }
+//        if let custom = viewController as? NavigationBarCustomization, custom.navigationBarShouldBeHidden {
+//            setNavigationBarHidden(true, animated: animated)
+//        }
+//        else {
+//            setNavigationBarHidden(false, animated: animated)
+//        }
     }
 }

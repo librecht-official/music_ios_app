@@ -15,6 +15,8 @@ final class AlbumCardsCollectionCell: UITableViewCell, Reusable {
     private lazy var collectionLayout = UICollectionViewFlowLayout()
     private lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionLayout)
     
+    var didSelectAlbumObserver: AnyObserver<Album>?
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
@@ -49,7 +51,7 @@ final class AlbumCardsCollectionCell: UITableViewCell, Reusable {
 
 extension AlbumCardsCollectionCell: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return  albums.count
+        return albums.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -63,7 +65,7 @@ extension AlbumCardsCollectionCell: UICollectionViewDataSource {
 
 extension AlbumCardsCollectionCell: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("did select")
+        didSelectAlbumObserver?.onNext(albums[indexPath.item])
         collectionView.deselectItem(at: indexPath, animated: true)
     }
 }

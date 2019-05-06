@@ -27,3 +27,31 @@ extension UIViewController {
         child.removeFromParent()
     }
 }
+
+import RxSwift
+import RxCocoa
+
+extension UINavigationController {
+    func push(_ viewController: UIViewController, animated: Bool) -> Signal<Void> {
+        return navigate(to: viewControllers + [viewController], animated: animated)
+    }
+    
+    func navigate(to viewControllers: [UIViewController], animated: Bool) -> Signal<Void> {
+        if !animated {
+            setViewControllers(viewControllers, animated: animated)
+            return Signal.just(())
+        }
+        
+        let subject = PublishSubject<Void>()
+        setViewControllers(viewControllers, animated: animated)
+        
+        guard let coordinator = transitionCoordinator else {
+            return Signal.just(())
+        }
+        coordinator.animate(alongsideTransition: nil) { _ in
+            subject.onNext(())
+            subject.onCompleted()
+        }
+        return subject.asSignal(onErrorSignalWith: Signal.empty())
+    }
+}

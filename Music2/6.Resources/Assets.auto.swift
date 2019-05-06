@@ -31,6 +31,7 @@ internal enum Asset {
   internal static let musicAlbumPlaceholder122x120 = ImageAsset(name: "musicAlbumPlaceholder122x120")
   internal static let pause44x44 = ImageAsset(name: "pause44x44")
   internal static let play44x44 = ImageAsset(name: "play44x44")
+  internal static let playInRound33x33 = ImageAsset(name: "playInRound33x33")
   internal static let playWhite39x40 = ImageAsset(name: "playWhite39x40")
   internal static let playedProgress = ImageAsset(name: "playedProgress")
   internal static let profileMock = ImageAsset(name: "profile_mock")

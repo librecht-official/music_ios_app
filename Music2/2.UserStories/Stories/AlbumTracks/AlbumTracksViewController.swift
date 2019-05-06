@@ -20,13 +20,10 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
     private lazy var topBar = AlbumTracksTopBar()
     
     private lazy var coverImage = UIImageView()
-    private lazy var gradient = GradientView(top: UIColor.clear, bottom: Color.blackBackground.uiColor.withAlphaComponent(0.8))
     private lazy var albumTitle = UILabel()
     private lazy var artist = UILabel()
     private lazy var tableView = UITableView()
-    private var headerTop: NSLayoutConstraint!
     private var headerHeight: NSLayoutConstraint!
-    private var titleLeading: NSLayoutConstraint!
     
     private let album: Album
     private let disposeBag = DisposeBag()
@@ -95,6 +92,8 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
             .drive()
             .disposed(by: disposeBag)
         
+        tableView.rx.setDelegate(self).disposed(by: disposeBag)
+        
         coverImage.kf.setImage(with: album.coverImageURL)
         albumTitle.text = album.title
         artist.text = album.artist.name
@@ -106,6 +105,20 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
     }
 }
 
+// MARK: - UITableViewDelegate
+
+extension AlbumTracksViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return MusicTrackCell.preferredHeight
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return self.tableView(tableView, heightForRowAt: indexPath)
+    }
+}
+
+// MARK: - Private
+
 private extension AlbumTracksViewController {
     func prepareLayout() {
         tableView.contentInsetAdjustmentBehavior = .never
@@ -115,17 +128,14 @@ private extension AlbumTracksViewController {
         view.addSubview(tableView)
         view.addSubview(topBar)
         header.addSubview(coverImage)
-        header.addSubview(gradient)
         header.addSubview(albumTitle)
         header.addSubview(artist)
         tableView.contentInset.top += layout.headerMaxHeight
         
-        [tableView, coverImage, albumTitle, artist, gradient, header, topBar]
+        [tableView, coverImage, albumTitle, artist, header, topBar]
             .forEach { v in v.translatesAutoresizingMaskIntoConstraints = false }
         
-        headerTop = header.topAnchor.constraint(equalTo: view.topAnchor)
         headerHeight = header.heightAnchor.constraint(equalToConstant: layout.headerMaxHeight)
-        titleLeading = albumTitle.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 8)
         
         NSLayoutConstraint.activate([
             topBar.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -136,9 +146,9 @@ private extension AlbumTracksViewController {
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             tableView.topAnchor.constraint(equalTo: view.topAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             
-            headerTop,
+            header.topAnchor.constraint(equalTo: view.topAnchor),
             headerHeight,
             header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -148,12 +158,7 @@ private extension AlbumTracksViewController {
             coverImage.topAnchor.constraint(equalTo: header.topAnchor),
             coverImage.bottomAnchor.constraint(equalTo: header.bottomAnchor),
             
-            gradient.leadingAnchor.constraint(equalTo: header.leadingAnchor),
-            gradient.trailingAnchor.constraint(equalTo: header.trailingAnchor),
-            gradient.topAnchor.constraint(equalTo: header.topAnchor),
-            gradient.bottomAnchor.constraint(equalTo: header.bottomAnchor),
-            
-            titleLeading,
+            albumTitle.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 8),
             albumTitle.trailingAnchor.constraint(equalTo: header.trailingAnchor, constant: -8),
             albumTitle.bottomAnchor.constraint(equalTo: header.bottomAnchor, constant: -8),
             
@@ -164,7 +169,7 @@ private extension AlbumTracksViewController {
     }
     
     func configureViews() {
-        view.backgroundColor = Color.blackBackground.uiColor
+        view.backgroundColor = Color.white.uiColor
         
         topBar.titleLabel.text = album.title
         topBar.backButton.rx.tap
@@ -174,7 +179,6 @@ private extension AlbumTracksViewController {
             .disposed(by: disposeBag)
         
         tableView.register(cellType: MusicTrackCell.self)
-        tableView.rowHeight = layout.rowHeight
         tableView.backgroundColor = UIColor.clear
         tableView.tableFooterView = UIView()
         tableView.alwaysBounceVertical = true
@@ -206,7 +210,6 @@ private extension AlbumTracksViewController {
 extension AlbumTracksViewController {
     struct LayoutGuide {
         let headerMaxHeight = CGFloat(300)
-        let rowHeight = CGFloat(44)
         
         func navBarAlpha(forContentOffsetY oy: CGFloat, navBarTotalHeight: CGFloat) -> CGFloat {
             let y = -oy

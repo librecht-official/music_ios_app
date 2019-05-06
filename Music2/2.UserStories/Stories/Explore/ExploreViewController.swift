@@ -22,11 +22,12 @@ extension ExploreSection: SectionModelType {
     }
 }
 
-final class ExploreViewController: UIViewController {
+final class ExploreViewController: UIViewController, ExploreNavigatable {
     typealias State = ExploreState
     typealias Command = ExploreCommand
-    typealias Feedback = DriverFeedback<State, Command>
+    typealias Feedback = CocoaFeedback<State, Command>
     
+    var navigator: ExploreNavigator!
     private var searchController: UISearchController!
     private lazy var tableView = UITableView()
     private lazy var activityIndicator = loadingIndicator()
@@ -34,9 +35,10 @@ final class ExploreViewController: UIViewController {
     private lazy var nothingHereView = InformationView(viewModel: InformationViewModel.nothingHere)
     
     private let disposeBag = DisposeBag()
+    private let didSelectAlbumInCard = PublishSubject<Album>()
     
     private lazy var dataSource = RxTableViewSectionedReloadDataSource<ExploreSection>(
-        configureCell: { (ds, tv, ip, item) -> UITableViewCell in
+        configureCell: { [unowned self] (ds, tv, ip, item) -> UITableViewCell in
             switch item {
             case let .albumRow(album):
                 let cell = tv.dequeueReusableCell(for: ip, cellType: AlbumRowCell.self)
@@ -45,6 +47,7 @@ final class ExploreViewController: UIViewController {
             case let .albumCardsCollection(albums):
                 let cell = tv.dequeueReusableCell(for: ip, cellType: AlbumCardsCollectionCell.self)
                 cell.configure(withAlbums: albums)
+                cell.didSelectAlbumObserver = self.didSelectAlbumInCard.asObserver()
                 return cell
             }
     })
@@ -66,14 +69,21 @@ final class ExploreViewController: UIViewController {
                 state.map { $0.showLoading }.drive(activityIndicator.rx.isAnimating),
                 state.map { $0.showLoading }.drive(tableView.rx.isHidden),
                 state.map { $0.showLoading }.filter { !$0 }.drive(rc.rx.isRefreshing),
-                state.map { !$0.nothingHere }.drive(nothingHereView.rx.isHidden),
+                state.map { !$0.nothingHere }.drive(nothingHereView.rx.isHidden)
             ]
             let uiToState = [
                 self.itemSelected(in: tableView),
-                rc.rx.pullToRefreshSignal.map { Command.reFetch }
+                self.didSelectAlbumInCard.asSignal(onErrorSignalWith: .never())
+                    .map { Command.didSelectAlbum($0) },
+                rc.rx.pullToRefreshSignal.map { Command.reFetch },
             ]
             return Bindings(subscriptions: stateToUI, mutations: uiToState)
         }
+        
+        let bindNavigation: Feedback = navigationBinding(query: { $0.navigationRequest }) {
+            [unowned self] route -> Signal<Command> in
+                return self.navigator.navigate(to: route).map { Command.didOpenAlbum }
+            }
         
         let bindAPI: Feedback = react(query: { $0.loadingRequest }) { _ -> Signal<Command> in
             return Environment.current.api.music.explore().asSignal()
@@ -83,7 +93,7 @@ final class ExploreViewController: UIViewController {
         Driver.system(
             initialState: Explore.initialState,
             reduce: Explore.reduce,
-            feedback: bindUI, bindAPI
+            feedback: bindUI, bindNavigation, bindAPI
             )
             .drive()
             .disposed(by: disposeBag)

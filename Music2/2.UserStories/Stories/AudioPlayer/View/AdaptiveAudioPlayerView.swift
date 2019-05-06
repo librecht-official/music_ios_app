@@ -54,6 +54,7 @@ class AdaptiveAudioPlayerView: UIView {
     private(set) lazy var coverImageView = UIImageView()
     private(set) lazy var smallCoverImageView = UIImageView()
     private(set) lazy var coverMaskView = UIView()
+    // FIXME: seeking backward doesn't work properly. Need to distinct events "sliding begin" and "sliding end". And perfom seeking the other way (Maybe even by replacing AVPlayerItem with the nwe one)
     private(set) lazy var slider: UISlider = Slider()
     private(set) lazy var sliderBackground = UIImageView()
     private(set) lazy var currentTimeLabel = UILabel()

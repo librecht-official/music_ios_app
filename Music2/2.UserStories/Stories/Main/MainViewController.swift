@@ -36,11 +36,14 @@ class MainViewController: UIViewController {
         
         bottomSheetController.delegate = self
         
-        pagesViewController.additionalSafeAreaInsets.bottom += style.bottomSheetMinHeight
-        embed(child: pagesViewController)
+//        pagesViewController.additionalSafeAreaInsets.bottom += style.bottomSheetMinHeight
+        let nc = UINavigationController(rootViewController: PagesViewController())
+        nc.additionalSafeAreaInsets.bottom += style.bottomSheetMinHeight
+        nc.setNavigationBarHidden(true, animated: false)
+        embed(child: nc)
         view.constrain(
-            subview: pagesViewController.view,
-            topAnchor: view.safeAreaLayoutGuide.topAnchor
+            subview: nc.view//,
+//            topAnchor: view.safeAreaLayoutGuide.topAnchor
         )
         
         embed(child: audioPlayerController, inside: bottomSheet)

@@ -29,12 +29,11 @@ class AudioPlayerSystem {
             return Bindings(subscriptions: [], mutations: avToCommands)
         }
         
-        Driver.system(
+        let system = Driver.system(
             initialState: AudioPlayer.initialState,
             reduce: AudioPlayer.reduce,
             feedback: bindAV
         )
-            .drive()
-            .disposed(by: disposeBag)
+        system.drive().disposed(by: disposeBag)
     }
 }
