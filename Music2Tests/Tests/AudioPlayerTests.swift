@@ -9,107 +9,10 @@
 import XCTest
 @testable import Music2
 
-//class AudioPlayerTests: XCTestCase {
-//    typealias AudioPlayer = Functional.AudioPlayer
-//
-//    func testPlayerBaseUseCase() {
-//        let playlist = [
-//            MusicTrack(
-//                id: 1,
-//                title: "1",
-//                durationSec: 123,
-//                albumsIds: [1],
-//                audioURL: URL(string: "file://test_1.mp3")
-//            ),
-//            MusicTrack(
-//                id: 2,
-//                title: "2",
-//                durationSec: 123,
-//                albumsIds: [1],
-//                audioURL: nil // Not playable
-//            ),
-//            MusicTrack(
-//                id: 3,
-//                title: "3",
-//                durationSec: 123,
-//                albumsIds: [1],
-//                audioURL: URL(string: "file://test_3.mp3")
-//            ),
-//            MusicTrack(
-//                id: 4,
-//                title: "4",
-//                durationSec: 123,
-//                albumsIds: [1],
-//                audioURL: URL(string: "file://test_4.mp3")
-//            ),
-//        ]
-//        // When in initial state: empty playlist, not playing, not any actions
-//        let s0 = AudioPlayer.initialState
-//        XCTAssert(s0.playlist.isEmpty)
-//        XCTAssert(s0.currentTrack == nil)
-//        XCTAssert(s0.playback != .playing)
-//        XCTAssert(s0.nextAction == nil)
-//
-//        // When setting playlist: it should set playlist, and not perform any actions
-//        let s1 = AudioPlayer.reduce(state: s0, command: .setPlaylist(playlist))
-//        XCTAssert(s1.playlist == playlist)
-//        XCTAssert(s1.playback != .playing)
-//        XCTAssert(s1.nextAction == nil)
-//
-//        // When play track #1:
-//        //  - playlist the same,
-//        //  - current track should be the next track that can be played (i.e. has url)
-//        //  - playback set to "playing"
-//        //  - perform action to play new item
-//        let s2 = AudioPlayer.reduce(state: s1, command: .playTrackAtIndex(1))
-//        XCTAssert(s2.playlist == playlist)
-//        XCTAssert(s2.currentTrackIndex == 2)
-//        XCTAssert(s2.playback == .playing)
-//        XCTAssert(s2.nextAction == .some(.playNewItem(playlist[2])))
-//
-//        // When pause:
-//        //  - playlist the same
-//        //  - current track the same
-//        //  - playback set to "paused"
-//        //  - perfrom action to pause current item
-//        let s3 = AudioPlayer.reduce(state: s2, command: .pause)
-//        XCTAssert(s3.playlist == playlist)
-//        XCTAssert(s3.currentTrackIndex == s2.currentTrackIndex)
-//        XCTAssert(s3.playback == .paused)
-//        XCTAssert(s3.nextAction == .some(.pauseCurrentItem))
-//
-//        // When resume:
-//        //  - playlist the same
-//        //  - current track the same
-//        //  - playback set to "playing"
-//        //  - perfrom action to play current item
-//        let s4 = AudioPlayer.reduce(state: s3, command: .resume)
-//        XCTAssert(s4.playlist == playlist)
-//        XCTAssert(s4.currentTrackIndex == s3.currentTrackIndex)
-//        XCTAssert(s4.playback == .playing)
-//        XCTAssert(s4.nextAction == .some(.playCurrentItem))
-//
-//        // When currentItemFinished and next playable track exists:
-//        let s5 = AudioPlayer.reduce(state: s4, command: .playingItemFinished)
-//        XCTAssert(s5.playlist == playlist, "playlist the same")
-//        XCTAssert(s5.currentTrackIndex == 3, "current track should be set to next playable track")
-//        XCTAssert(s5.playback == s4.playback, "playback the same")
-//        XCTAssert(s5.nextAction == nil, "no next action")
-//
-//        // When currentItemFinished and next playable track doesn't exists:
-//        let s6 = AudioPlayer.reduce(state: s5, command: .playingItemFinished)
-//        XCTAssert(s6.playlist == playlist, "playlist the same")
-//        XCTAssert(s6.currentTrackIndex == 3, "current track leaved the same")
-//        XCTAssert(s6.playback == .stopped, "playback set to 'stoped'")
-//        XCTAssert(s6.nextAction == nil, "no next action")
-//    }
-//}
-
-class AudioPlayerTests2: XCTestCase {
-    typealias AudioPlayer = Functional.AudioPlayer
-    
+class AudioPlayerTests: XCTestCase {
     func testPlayerBaseUseCase() {
-        let playlist = [
+        // Given
+        let tracks = [
             MusicTrack(
                 id: 1,
                 title: "1",
@@ -138,66 +41,73 @@ class AudioPlayerTests2: XCTestCase {
                 albumsIds: [1],
                 audioURL: URL(string: "file://test_4.mp3")
             ),
-        ]
-        // When in initial state: empty playlist, not playing, not any actions
+            ]
+        let album = Album(
+            id: 0,
+            title: "",
+            artist: Artist(id: 0, name: ""),
+            coverImageURL: nil,
+            tracks: tracks
+        )
+        let playlist = AudioPlayerPlaylist.album(album, startFrom: 0)
+        
+        // When in initial state:
         TestScript(AudioPlayer.initialState, reduce: AudioPlayer.reduce) { (s0, _) in
-            XCTAssert(s0.playlist.isEmpty)
-            XCTAssert(s0.currentTrack == nil)
-            XCTAssert(s0.playback != .playing)
-            XCTAssert(s0.nextAction == nil)
+            XCTAssertTrue(s0.playlist.tracks.isEmpty, "empty playlist")
+            XCTAssertEqual(s0.currentTrack, nil, "no current track")
+            XCTAssertNotEqual(s0.playback, .playing, "not playing")
+            XCTAssertEqual(s0.nextAction, nil, "not perform any actions")
         }
-        // When setting playlist: it should set playlist, and not perform any actions
         .when(.setPlaylist(playlist)) { (s1, _) in
-            XCTAssert(s1.playlist == playlist)
-            XCTAssert(s1.playback != .playing)
-            XCTAssert(s1.nextAction == nil)
+            XCTAssertEqual(s1.playlist, playlist, "it should set playlist")
+            XCTAssertNotEqual(s1.playback, .playing, "not playing")
+            XCTAssertEqual(s1.nextAction, nil, "not perform any actions")
         }
         // When play track #1:
-        //  - playlist the same,
-        //  - current track should be the next track that can be played (i.e. has url)
-        //  - playback set to "playing"
-        //  - perform action to play new item
         .when(.playTrackAtIndex(1)) { (s2, _) in
-            XCTAssert(s2.playlist == playlist)
-            XCTAssert(s2.currentTrackIndex == 2)
-            XCTAssert(s2.playback == .playing)
-            XCTAssert(s2.nextAction == .some(.playNewItem(playlist[2])))
+            XCTAssertEqual(s2.playlist, playlist, "playlist the same")
+            XCTAssertEqual(s2.currentTrackIndex, 2, "current track should be the next track that can be played (i.e. has url)")
+            XCTAssertEqual(s2.playback, .playing, "playback set to \"playing\"")
+            let track = PlayableMusicTrack(
+                originalTrack: playlist.tracks[2],
+                audioURL: playlist.tracks[2].audioURL!
+            )
+            XCTAssertEqual(s2.nextAction, .some(.playNewItem(track)), "perform action to play new item")
         }
-        // When pause:
-        //  - playlist the same
-        //  - current track the same
-        //  - playback set to "paused"
-        //  - perfrom action to pause current item
+        .when(.currentItemIsSet(true), then: { (s31, s) in
+            XCTAssertTrue(s31.currentItemIsSet, "current item is set")
+            XCTAssertNil(s31.nextAction, "nextAction reset")
+        })
         .when(.pause) { (s3, s) in
-            XCTAssert(s3.playlist == playlist)
-            XCTAssert(s3.currentTrackIndex == s[2].currentTrackIndex)
-            XCTAssert(s3.playback == .paused)
-            XCTAssert(s3.nextAction == .some(.pauseCurrentItem))
+            XCTAssertEqual(s3.playlist, playlist, "playlist the same")
+            XCTAssertEqual(s3.currentTrackIndex, s.last?.currentTrackIndex, "current track the same")
+            XCTAssertEqual(s3.playback, .paused, "playback set to \"paused\"")
+            XCTAssertEqual(s3.nextAction, .some(.pauseCurrentItem), "perfrom action to pause current item")
         }
-        // When resume:
-        //  - playlist the same
-        //  - current track the same
-        //  - playback set to "playing"
-        //  - perfrom action to play current item
         .when(.resume) { (s4, s) in
-            XCTAssert(s4.playlist == playlist)
-            XCTAssert(s4.currentTrackIndex == s[3].currentTrackIndex)
-            XCTAssert(s4.playback == .playing)
-            XCTAssert(s4.nextAction == .some(.playCurrentItem))
+            XCTAssertEqual(s4.playlist, playlist, "playlist the same")
+            XCTAssertEqual(s4.currentTrackIndex, s.last?.currentTrackIndex, "current track the same")
+            XCTAssertEqual(s4.playback, .playing, "playback set to \"playing\"")
+            XCTAssertEqual(s4.nextAction, .some(.playCurrentItem), "perfrom action to play current item")
         }
         // When currentItemFinished and next playable track exists:
         .when(.playingItemFinished) { (s5, s) in
-            XCTAssert(s5.playlist == playlist, "playlist the same")
-            XCTAssert(s5.currentTrackIndex == 3, "current track should be set to next playable track")
-            XCTAssert(s5.playback == s[4].playback, "playback the same")
-            XCTAssert(s5.nextAction == nil, "no next action")
+            let i = 3
+            XCTAssertEqual(s5.playlist, playlist, "playlist the same")
+            XCTAssertEqual(s5.currentTrackIndex, i, "current track should be set to next playable track")
+            XCTAssertEqual(s5.playback, s.last?.playback, "playback the same")
+            let track = PlayableMusicTrack(
+                originalTrack: playlist.tracks[i],
+                audioURL: playlist.tracks[i].audioURL!
+            )
+            XCTAssertEqual(s5.nextAction, .playNewItem(track), "no next action")
         }
         // When currentItemFinished and next playable track doesn't exists:
         .when(.playingItemFinished) { (s6, _) in
-            XCTAssert(s6.playlist == playlist, "playlist the same")
-            XCTAssert(s6.currentTrackIndex == 3, "current track leaved the same")
-            XCTAssert(s6.playback == .stopped, "playback set to 'stoped'")
-            XCTAssert(s6.nextAction == nil, "no next action")
+            XCTAssertEqual(s6.playlist, playlist, "playlist the same")
+            XCTAssertEqual(s6.currentTrackIndex, 3, "current track leaved the same")
+            XCTAssertEqual(s6.playback, .stopped, "playback set to 'stoped'")
+            XCTAssertEqual(s6.nextAction, nil, "no next action")
         }
     }
 }

@@ -57,13 +57,13 @@ class AudioPlayerViewController: UIViewController {
         interfaceView.rx.value
             .withLatestFrom(player.currentPlaybackTotalTime.filterNil()) { ($0, $1) }
             .map { TimeInterval($0) * $1 }
-            .map { AudioPlayerCommand.seek(to: $0) }
+            .map { AudioPlayerSystemCommand.seek(to: $0) }
             .bind(to: player.command)
             .disposed(by: disposeBag)
         
         interfaceView.playbackControl.playButton.rx.tap
             .withLatestFrom(player.isPlaying)
-            .map { $0 ? AudioPlayerCommand.pause : .play }
+            .map { $0 ? AudioPlayerSystemCommand.pause : .play }
             .bind(to: player.command)
             .disposed(by: disposeBag)
     }

@@ -30,24 +30,24 @@ class Environment {
         pop()
     }
     
-    let audioPlayer: AudioPlayer
+    let audioPlayer: AudioPlayerSystem
     let api: NetworkingAPI
     
-    init(audioPlayer: AudioPlayer, api: NetworkingAPI) {
+    init(audioPlayer: AudioPlayerSystem, api: NetworkingAPI) {
         self.audioPlayer = audioPlayer
         self.api = api
     }
 }
 
 func makeAppEnvironment() -> Environment {
-    let audioPlayer = AppAudioPlayer()
+    let audioPlayer = AppAudioPlayerSystem()
     
     return Environment(
         audioPlayer: audioPlayer,
         api: NetworkingAPI(
             music: MusicAPINetworkingClient(
                 config: APIConfiguration(
-                    baseURL: URL(string: "http://192.168.0.2:8000")!,
+                    baseURL: URL(string: "http://192.168.0.4:8000")!,
                     logger: { print($0) }
                 )
             )

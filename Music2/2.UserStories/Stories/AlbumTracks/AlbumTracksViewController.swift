@@ -44,6 +44,7 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
         prepareLayout()
         configureViews()
         
+        let env = Environment.current!
         let tableView = self.tableView
         
         tableView.rx.contentOffset
@@ -78,8 +79,8 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
         let bindAudio: (Driver<State>) -> Signal<Command> = react(
             query: { $0.shouldPlayPlaylist },
             effects: { playlist in
-                Environment.current.audioPlayer.playlist.accept(playlist)
-                Environment.current.audioPlayer.command.onNext(.play)
+                env.audioPlayer.command.accept(.setPlaylist(playlist))
+                env.audioPlayer.command.accept(.play)
                 return Signal.just(Command.didStartPlayingTrack)
             }
         )

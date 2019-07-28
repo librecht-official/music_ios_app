@@ -30,12 +30,21 @@ struct MusicTrack: Equatable, Codable {
     }
 }
 
+struct PlayableMusicTrack: Equatable {
+    let originalTrack: MusicTrack
+    let audioURL: URL
+}
+
 // MARK: - [MusicTrack]
 
 extension Array where Element == MusicTrack {
-    func nextPlayableElement(startingFrom index: Int) -> (Int, MusicTrack)? {
-        return enumerated().first { (i, e) -> Bool in
-            return i >= index && e.audioURL != nil
-        }
+    func nextPlayableElement(startingFrom index: Int) -> (Int, PlayableMusicTrack)? {
+        return enumerated()
+            .first { (i, track) -> Bool in
+                return i >= index && track.audioURL != nil
+            }
+            .map { (i, track) in
+                return (i, PlayableMusicTrack(originalTrack: track, audioURL: track.audioURL!))
+            }
     }
 }

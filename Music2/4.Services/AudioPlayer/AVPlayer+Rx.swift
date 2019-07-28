@@ -8,24 +8,32 @@
 
 import AVFoundation
 import RxSwift
+import RxCocoa
+
+enum PlayingFinishResult {
+    case nextItemAvaliable
+    case stop
+}
 
 extension Reactive where Base: AVPlayer {
-    var status: Observable<AVPlayer.Status> {
+    var status: Driver<AVPlayer.Status> {
         return observe(AVPlayer.Status.self, #keyPath(AVPlayer.status))
             .map { $0 ?? .unknown }
+            .asDriver(onErrorDriveWith: .never())
     }
     
-    var rate: Observable<Float> {
+    var rate: Driver<Float> {
         return observe(Float.self, #keyPath(AVPlayer.rate))
             .map { $0 ?? 0.0 }
+            .asDriver(onErrorDriveWith: .never())
     }
     
-    var isPlaying: Observable<Bool> {
+    var isPlaying: Driver<Bool> {
         return rate.map { $0 != 0.0 }
     }
     
-    func playbackTime(_ period: TimeInterval) -> Observable<TimeInterval> {
-        return Observable.create { observer -> Disposable in
+    func playbackTime(_ period: TimeInterval) -> Driver<TimeInterval> {
+        let observale = Observable<TimeInterval>.create { observer -> Disposable in
             let time = CMTime(seconds: period, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
             let t = self.base.addPeriodicTimeObserver(forInterval: time, queue: .main, using: { time in
                 observer.onNext(time.seconds)
@@ -34,18 +42,16 @@ extension Reactive where Base: AVPlayer {
                 self.base.removeTimeObserver(t)
             }
         }
+        return observale.asDriver(onErrorDriveWith: .never())
     }
     
-    var currentItem: Observable<AVPlayerItem?> {
+    var currentItem: Driver<AVPlayerItem?> {
         return observe(AVPlayerItem.self, #keyPath(AVPlayer.currentItem))
+            .asDriver(onErrorDriveWith: .never())
     }
     
-    enum PlayingFinishResult {
-        case nextItemAvaliable
-        case stop
-    }
-    var currentItemDidPlayToEnd: Observable<PlayingFinishResult> {
-        return currentItem.flatMap { item -> Observable<PlayingFinishResult> in
+    var currentItemDidPlayToEnd: Signal<PlayingFinishResult> {
+        return currentItem.flatMap { item -> Signal<PlayingFinishResult> in
             if let item = item {
                 return item.rx.didPlayToEnd.map { _ in .nextItemAvaliable }
             }
