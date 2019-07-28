@@ -8,8 +8,10 @@
 
 import UIKit
 import Reusable
+import Layout
 
 final class TitleHeaderView: UIView {
+    // MARK: Style
     struct Style {
         let backgroundColor = Color.white
         let title = LabelStyle(font: Font.semibold(22), textColor: Color.blackText)
@@ -19,6 +21,8 @@ final class TitleHeaderView: UIView {
         backgroundColor = style.backgroundColor.uiColor
         titleLabel.apply(style: style.title)
     }
+    
+    // MARK: Properties
     
     static let desiredHeight = CGFloat(42)
     
@@ -35,14 +39,19 @@ final class TitleHeaderView: UIView {
         apply(style: style)
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let r = LayoutRules(h: .h1(leading: 16, trailing: 16), v: .v1(top: 8, bottom: 8))
-        titleLabel.frame = layout(r, inBounds: bounds)
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Layout
+    
+    private lazy var layout = Component(
+        titleLabel, .h1(leading: 16, trailing: 16), .v1(top: 8, bottom: 8)
+    )
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layout.performLayout(inFrame: bounds)
     }
 }
 

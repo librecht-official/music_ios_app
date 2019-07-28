@@ -8,8 +8,11 @@
 
 import UIKit
 import MediaPlayer
+import Layout
 
 final class VolumeControl: UIView {
+    // MARK: Style
+    
     struct Style {
         let sliderTintColor = Color.black
         let volumeIconsTintColor = Color.gray
@@ -25,6 +28,8 @@ final class VolumeControl: UIView {
         maxVolumeImageView.image = style.maxVolumeIcon.image.template
     }
     
+    // MARK: Properties
+    
     private(set) lazy var volumeSlider: MPVolumeView = SystemVolumeView()
     private(set) lazy var minVolumeImageView = UIImageView()
     private(set) lazy var maxVolumeImageView = UIImageView()
@@ -37,40 +42,46 @@ final class VolumeControl: UIView {
         apply(style: style)
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        let minVolSize = minVolumeImageView.image?.size ?? .zero
-        let maxVolSize = maxVolumeImageView.image?.size ?? .zero
-        var minVolume = CGRect.zero
-        var maxVolume = CGRect.zero
-        stackRow(
-            alignment: .fill, spacing: 4, [
-                StackItem({ minVolume = $0 }, length: .abs(minVolSize.width)),
-                StackItem({ self.volumeSlider.frame = $0 }, length: .weight(1)),
-                StackItem({ maxVolume = $0 }, length: .abs(maxVolSize.width)),
-            ],
-            inFrame: bounds
-        )
-        self.minVolumeImageView.frame = layout(
-            LayoutRules(
-                h: .h1(leading: 0, trailing: 0),
-                v: .v4(centerY: .abs(0), height: .abs(minVolSize.height))
-            ),
-            inFrame: minVolume
-        )
-        self.maxVolumeImageView.frame = layout(
-            LayoutRules(
-                h: .h1(leading: 0, trailing: 0),
-                v: .v4(centerY: .abs(0), height: .abs(maxVolSize.height))
-            ),
-            inFrame: maxVolume
-        )
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: Layout
+    
+    private func makeLayout() -> LayoutComponent {
+        let minVolSize = minVolumeImageView.image?.size ?? .zero
+        let maxVolSize = maxVolumeImageView.image?.size ?? .zero
+        
+        return Row(
+            spacing: 4, [
+                RowItem(
+                    Component(
+                        minVolumeImageView,
+                        .zero, .v4(centerY: .abs(0), height: .abs(minVolSize.height))
+                    ),
+                    length: .abs(minVolSize.width)
+                ),
+                RowItem(Component(volumeSlider), length: .weight(1)),
+                RowItem(
+                    Component(
+                        maxVolumeImageView,
+                        .zero, .v4(centerY: .abs(0), height: .abs(maxVolSize.height))
+                    ),
+                    length: .abs(maxVolSize.width)
+                )
+            ]
+        )
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        if bounds.width > 0 {
+            makeLayout().performLayout(inFrame: bounds)
+        }
+    }
 }
+
+// MARK: - SystemVolumeView
 
 private final class SystemVolumeView: MPVolumeView {
     override func volumeSliderRect(forBounds bounds: CGRect) -> CGRect {

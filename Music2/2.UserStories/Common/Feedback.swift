@@ -12,7 +12,7 @@ import RxFeedback
 
 typealias CocoaFeedback<State, Command> = (Driver<State>) -> Signal<Command>
 
-/** Special wrapper function to create navigation binding, allowing navigation by the same query more then once in a row */
+/// Special wrapper function to create navigation binding, allowing navigation by the same query more then once in a row
 func navigationBinding<State, Query, Mutation>(
     query: @escaping (State) -> Query?,
     effects: @escaping (Query) -> Signal<Mutation>

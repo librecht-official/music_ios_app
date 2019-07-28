@@ -78,7 +78,7 @@ final class PagesTopView: UIView {
             let toFrame = calcHighligtingViewFrame(
                 rawFrame: toView.frame, highligtingIndex: targetIndex
             )
-            let frame = fromFrame.interpolate(toFrame: toFrame, p: p)
+            let frame = fromFrame.interpolate(toFrame: toFrame, progress: p)
             setHighligtingView(frame: frame)
         }
         if p > 0.9 {

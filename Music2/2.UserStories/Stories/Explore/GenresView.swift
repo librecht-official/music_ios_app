@@ -7,23 +7,25 @@
 //
 
 import UIKit
+import Layout
 
 final class GenresView: UIView {
+    // MARK: Style
+    
     struct Style {
         let label = LabelStyle(font: Font.medium(12), textColor: Color.white, alignment: .center)
         let backgroundColor = Color.jumboGray
         let cornerRadius = CGFloat(4)
     }
-    var style: Style = Style() {
-        didSet {
-            apply(style: style)
-        }
-    }
+    var style: Style = Style() { didSet { apply(style: style) } }
     func apply(style: Style) {
         label.apply(style: style.label)
         backgroundColor = style.backgroundColor.uiColor
         layer.cornerRadius = style.cornerRadius
     }
+    
+    // MARK: Properties
+    
     var text: String {
         get { return label.text ?? "" }
         set { label.text = newValue }
@@ -36,6 +38,8 @@ final class GenresView: UIView {
         addSubview(label)
         apply(style: style)
     }
+    
+    // MARK: Layout
     
     override func layoutSubviews() {
         super.layoutSubviews()

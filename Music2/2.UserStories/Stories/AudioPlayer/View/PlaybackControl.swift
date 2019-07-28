@@ -9,8 +9,11 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Layout
 
 final class PlaybackControl: UIView {
+    // MARK: Style
+    
     struct Style {
         let playButton = IconButtonStyle(
             normalIcon: Asset.play44x44, selectedIcon: Asset.pause44x44,
@@ -30,6 +33,8 @@ final class PlaybackControl: UIView {
         fastBackwardButton.apply(style: style.fastBackwardButton)
     }
     
+    // MARK: Properties
+    
     private(set) lazy var playButton = UIButton(type: .custom)
     private(set) lazy var fastForwardButton = UIButton(type: .system)
     private(set) lazy var fastBackwardButton = UIButton(type: .system)
@@ -42,22 +47,25 @@ final class PlaybackControl: UIView {
         apply(style: style)
     }
     
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        stackRow(
-            alignment: .fill, spacing: 4, [
-                StackItem({ self.fastBackwardButton.frame = $0 }, length: .weight(1)),
-                StackItem({ self.playButton.frame = $0 }, length: .weight(1)),
-                StackItem({ self.fastForwardButton.frame = $0 }, length: .weight(1)),
-            ],
-            inFrame: bounds
-        )
-    }
-    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    // MARK: Layout
+    
+    private lazy var layout = Row(spacing: 4, [
+        RowItem(Component(fastBackwardButton), length: .weight(1)),
+        RowItem(Component(playButton), length: .weight(1)),
+        RowItem(Component(fastForwardButton), length: .weight(1))
+    ])
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        layout.performLayout(inFrame: bounds)
+    }
 }
+
+// MARK: - Rx
 
 extension Reactive where Base: PlaybackControl {
     var isEnabled: Binder<Bool> {

@@ -7,6 +7,9 @@
 //
 
 import UIKit
+import Layout
+
+// MARK: - InformationViewModel
 
 struct InformationViewModel {
     let icon: ImageAsset
@@ -17,7 +20,11 @@ struct InformationViewModel {
     )
 }
 
+// MARK: - InformationView
+
 final class InformationView: UIView {
+    // MARK: Style
+    
     struct Style {
         let imageTint = Color.black
         let message = LabelStyle(
@@ -30,7 +37,12 @@ final class InformationView: UIView {
         imageView.tintColor = style.imageTint.uiColor
         messageLabel.apply(style: style.message)
     }
+    
+    // MARK: ViewModel
+    
     var viewModel: InformationViewModel { didSet { setNeedsLayout() } }
+    
+   // MARK: Properties
     
     private let imageView = UIImageView()
     private let messageLabel = UILabel()
@@ -43,6 +55,12 @@ final class InformationView: UIView {
         apply(style: style)
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Layout
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         imageView.image = viewModel.icon.image.template
@@ -52,9 +70,8 @@ final class InformationView: UIView {
         let imageWidth = imageSize.width
         let aspect = imageSize.height != 0 ? imageWidth / imageSize.height : 1
         imageView.frame = layout(
-            aspectRatio: aspect, .h(
-                .h4(centerX: .abs(0), width: .abs(imageWidth)), and: .centerY(.rel(0.8))
-            ),
+            aspectRatio: aspect,
+            .h(.h4(centerX: .abs(0), width: .abs(imageWidth)), and: .centerY(.rel(0.8))),
             inBounds: bounds
         )
         var messageContainer = layout(
@@ -67,11 +84,11 @@ final class InformationView: UIView {
         messageContainer.size.height = vm.boundingRect(width: messageContainer.width).height
         messageLabel.frame = messageContainer
     }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
+
+extension UIImageView: SizeAware {}
+
+// MARK: - InformationViewController
 
 final class InformationViewController: UIViewController {
     var viewModel: InformationViewModel {

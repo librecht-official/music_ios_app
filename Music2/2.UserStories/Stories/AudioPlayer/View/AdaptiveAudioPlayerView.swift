@@ -8,8 +8,12 @@
 
 import UIKit
 import Kingfisher
+import Layout
 
+/// AudioPlayer's view with 2 states: minimized and maximized
 class AdaptiveAudioPlayerView: UIView {
+    // MARK: Style
+    
     struct Style {
         let albumCoverPlaceholder = Asset.musicAlbumPlaceholder122x120
         let currentTime = LabelStyle(
@@ -51,10 +55,12 @@ class AdaptiveAudioPlayerView: UIView {
         smallTitleLabel.numberOfLines = 2
     }
     
+    // MARK: Properties
+    
     private(set) lazy var coverImageView = UIImageView()
     private(set) lazy var smallCoverImageView = UIImageView()
     private(set) lazy var coverMaskView = UIView()
-    // FIXME: seeking backward doesn't work properly. Need to distinct events "sliding begin" and "sliding end". And perfom seeking the other way (Maybe even by replacing AVPlayerItem with the nwe one)
+    // FIXME: seeking backward doesn't work properly. Need to distinct events "sliding begin" and "sliding end". And perfom seeking the other way (Maybe even by replacing AVPlayerItem with the new one)
     private(set) lazy var slider: UISlider = Slider()
     private(set) lazy var sliderBackground = UIImageView()
     private(set) lazy var currentTimeLabel = UILabel()
@@ -98,49 +104,56 @@ class AdaptiveAudioPlayerView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: Layout
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         switch state {
-        case .maximized: maximizedLayout()
-        case .minimized: minimizedLayout()
+        case .maximized: performMaximizedLayout()
+        case .minimized: performMinimizedLayout()
         }
         let rect = convert(slider.frame, to: coverImageView)
-        coverMaskView.frame = CGRect(x: 0, y: 0, width: coverImageView.bounds.width, height: max(0, rect.minY))
+        coverMaskView.frame = CGRect(
+            x: 0, y: 0,
+            width: coverImageView.bounds.width, height: max(0, rect.minY)
+        )
     }
     
-    private func maximizedLayout() {
-        let content = layout(
-            LayoutRules(
-                h: .h1(leading: 24, trailing: 24),
-                v: .v1(top: 32, bottom: 32)
+    private(set) lazy var maximizedLayout = Container(
+        h: .h1(leading: 24, trailing: 24), v: .v1(top: 32, bottom: 32),
+        relative: false,
+        inner: Column(spacing: 16, [
+            ColumnItem(
+                AspectRatioComponent(
+                    coverImageView, ratio: 1,
+                    .v(.v1(top: 0, bottom: 0), and: .centerX(.abs(0)))
+                ),
+                length: .weight(3), bottom: 16
             ),
-            inFrame: bounds
+            ColumnItem(sliderLayout, length: .abs(28)),
+            ColumnItem(
+                Row(spacing: 8, [
+                    RowItem(Component(currentTimeLabel), length: .weight(1)),
+                    RowItem(Component(totalTimeLabel), length: .weight(1)),
+                    ]
+                ),
+                length: .abs(20), top: -8
+            ),
+            ColumnItem(Component(titleLabel), length: .weight(1)),
+            ColumnItem(Component(playbackControl), length: .weight(1), top: 8),
+            ColumnItem(Component(volumeControl), length: .weight(1)),
+            ]
         )
-        var coverImageContainer = CGRect.zero
-        var playbackTimeContainer = CGRect.zero
-        stackColumn(
-            alignment: .fill, spacing: 16, [
-                StackItem({ coverImageContainer = $0 }, length: .weight(3), bottom: 16),
-                StackItem({ self.slider.frame = $0 }, length: .abs(28)),
-                StackItem({ playbackTimeContainer = $0 }, length: .abs(20), top: -8),
-                StackItem({ self.titleLabel.frame = $0 }, length: .weight(1)),
-                StackItem({ self.playbackControl.frame = $0 }, length: .weight(1), top: 8),
-                StackItem({ self.volumeControl.frame = $0 }, length: .weight(1)),
-            ],
-            inFrame: content
-        )
-        coverImageView.frame = layout(
-            aspectRatio: 1, .v(.v1(top: 0, bottom: 0), and: .centerX(.abs(0))),
-            inFrame: coverImageContainer
-        )
-        sliderBackground.frame = slider.frame
-        stackRow(
-            alignment: .fill, spacing: 8, [
-                StackItem({ self.currentTimeLabel.frame = $0 }, length: .weight(1)),
-                StackItem({ self.totalTimeLabel.frame = $0 }, length: .weight(1))
-            ],
-            inFrame: playbackTimeContainer
-        )
+    )
+    
+    private lazy var sliderLayout = Container(
+        sliderBackground, h: .zero, v: .zero, relative: false,
+        inner: Component(slider)
+    )
+    
+    private func performMaximizedLayout() {
+        maximizedLayout.performLayout(inFrame: bounds)
+        
         coverImageView.alpha = 1
         sliderBackground.alpha = 1
         slider.alpha = 1
@@ -148,35 +161,34 @@ class AdaptiveAudioPlayerView: UIView {
         volumeControl.alpha = 1
     }
     
-    private func minimizedLayout() {
-        maximizedLayout()
+    private(set) lazy var minimizedLayout = Container(
+        h: .h1(leading: 6, trailing: 6), v: .v2(top: 6, height: .abs(80)),
+        relative: false,
+        inner: Column(spacing: 12, [
+            ColumnItem(sliderLayout, length: .abs(28)),
+            ColumnItem(
+                Row(spacing: 8, [
+                    RowItem(Component(playbackControl), length: .weight(2), top: 4, bottom: 4),
+                    RowItem(Component(smallTitleLabel), length: .weight(3)),
+                    RowItem(
+                        AspectRatioComponent(
+                            smallCoverImageView, ratio: 1,
+                            .h(.h1(leading: 0, trailing: 0), and: .centerY(.abs(0)))),
+                        length: .abs(38)
+                    )
+                    ]
+                ),
+                length: .weight(1), leading: 10, trailing: 10
+            )
+            ]
+        )
+    )
+    
+    private func performMinimizedLayout() {
+        // To perfrom right animation between minimized and maximazed states, frames of some views that are not visible in minimized state (their frames remains unchanged in minimazed state) should be calculated first.
+        performMaximizedLayout()
         
-        let content = layout(
-            LayoutRules(h: .h1(leading: 6, trailing: 6), v: .v2(top: 6, height: .abs(80))),
-            inFrame: bounds
-        )
-        var bottom = CGRect.zero
-        stackColumn(
-            alignment: .fill, spacing: 12, [
-                StackItem({ self.slider.frame = $0 }, length: .abs(28)),
-                StackItem({ bottom = $0 }, length: .weight(1), leading: 10, trailing: 10),
-            ],
-            inFrame: content
-        )
-        sliderBackground.frame = slider.frame
-        var smallCoverContainer = CGRect.zero
-        stackRow(
-            alignment: .fill, spacing: 8, [
-                StackItem({ self.playbackControl.frame = $0 }, length: .weight(2), top: 4, bottom: 4),
-                StackItem({ self.smallTitleLabel.frame = $0 }, length: .weight(3)),
-                StackItem({ smallCoverContainer = $0 }, length: .abs(38))
-            ],
-            inFrame: bottom
-        )
-        smallCoverImageView.frame = layout(
-            aspectRatio: 1, .h(.h1(leading: 0, trailing: 0), and: .centerY(.abs(0))),
-            inFrame: smallCoverContainer
-        )
+        minimizedLayout.performLayout(inFrame: bounds)
         
         coverImageView.alpha = 0
         sliderBackground.alpha = 1
@@ -184,6 +196,8 @@ class AdaptiveAudioPlayerView: UIView {
         playbackControl.alpha = 1
         volumeControl.alpha = 0
     }
+    
+    // MARK: Configuration
     
     func set(albumCoverURL url: URL?) {
         let placeholder = style.albumCoverPlaceholder.image.template
@@ -229,6 +243,8 @@ class AdaptiveAudioPlayerView: UIView {
     }
 }
 
+// MARK: - Slider
+
 private final class Slider: UISlider {
     override func trackRect(forBounds bounds: CGRect) -> CGRect {
         var rect = bounds
@@ -236,6 +252,8 @@ private final class Slider: UISlider {
         return rect
     }
 }
+
+// MARK: - Rx
 
 import RxSwift
 import RxCocoa

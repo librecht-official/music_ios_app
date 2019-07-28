@@ -8,6 +8,7 @@
 
 import UIKit
 import Kingfisher
+import Layout
 
 struct AlbumCellViewModel {
     let info: AlbumInfoViewModel
@@ -18,6 +19,8 @@ struct AlbumInfoViewModel {
 }
 
 final class AlbumCellView: UIView {
+    // MARK: Style
+    
     struct Style {
         let backgroundColor = Color.white
         var coverImageCornerRadius = CGFloat(4)
@@ -58,6 +61,8 @@ final class AlbumCellView: UIView {
         setNeedsLayout()
     }
     
+    // MARK: Properties
+    
     private let coverImageView = UIImageView()
     private let playButton = UIButton(type: .system)
     private let infoView = UIView()
@@ -85,6 +90,12 @@ final class AlbumCellView: UIView {
         infoView.addSubview(yearLabel)
         infoView.addSubview(genresView)
     }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Configuration
     
     func configure(with album: Album) {
         coverImageView.kf.setImage(with: album.coverImageURL)
@@ -125,10 +136,6 @@ final class AlbumCellView: UIView {
         yearLabel.frame = layout.info.year
         genresView.frame = layout.info.genres
     }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 }
 
 struct AlbumViewLayout {
@@ -150,7 +157,7 @@ struct AlbumViewLayout {
         var likeButtonContainer = CGRect.zero
         var disclosureIndicatorContainer = CGRect.zero
         stackRow(
-            alignment: .fill, spacing: 0, [
+            spacing: 0, [
                 StackItem({ _ in }, length: .abs(albumCoverImage.width), leading: 16, trailing: 10),
                 StackItem({ infoFrame = $0 }, length: .weight(1), top: 8, bottom: 8, trailing: 0),
                 StackItem({ likeButtonContainer = $0 }, length: .abs(44)),
@@ -196,7 +203,7 @@ struct AlbumViewLayout {
             inBounds: bounds
         )
         stackColumn(
-            alignment: .fill, spacing: 0, [
+            spacing: 0, [
                 StackItem({ albumCoverImage = $0 }, length: .weight(1), bottom: 5),
                 StackItem({ infoFrame = $0 }, length: .abs(AlbumInfoLayout.totalHeightForCard))
             ],
@@ -242,7 +249,7 @@ struct AlbumInfoLayout {
         var genres = CGRect.zero
         
         stackColumn(
-            alignment: .fill, spacing: 4, [
+            spacing: 4, [
                 StackItem({ title = $0 }, length: .weight(1)),
                 StackItem({ artist = $0 }, length: .weight(1)),
                 StackItem({ yearAndGenres = $0 }, length: .weight(1)),
@@ -251,7 +258,7 @@ struct AlbumInfoLayout {
         )
         let text = viewModel.year.boundingRect(width: yearAndGenres.width)
         stackRow(
-            alignment: .fill, spacing: 8, [
+            spacing: 8, [
                 StackItem({ year = $0 }, length: .abs(text.width)),
                 StackItem({ genres = $0 }, length: .weight(1)),
                 ],
@@ -272,7 +279,7 @@ struct AlbumInfoLayout {
         var genres = CGRect.zero
         
         stackColumn(
-            alignment: .fill, spacing: 0, [
+            spacing: 0, [
                 StackItem({ title = $0 }, length: .abs(21), bottom: 1),
                 StackItem({ artist = $0 }, length: .abs(16), bottom: 2),
                 StackItem({ genres = $0 }, length: .abs(20), leading: 4, trailing: 4)

@@ -8,8 +8,11 @@
 
 import UIKit
 import Reusable
+import Layout
 
 final class MusicTrackCell: UITableViewCell, Reusable {
+    // MARK: Style
+    
     struct Style {
         let play = IconButtonStyle(
             normalIcon: Asset.playInRound33x33, tintColor: Color.primaryBlue
@@ -27,6 +30,8 @@ final class MusicTrackCell: UITableViewCell, Reusable {
         likeButton.apply(style: style.like)
     }
     
+    // MARK: Properties
+    
     static let preferredHeight = CGFloat(50)
     
     private lazy var playButton = UIButton()
@@ -43,6 +48,12 @@ final class MusicTrackCell: UITableViewCell, Reusable {
         apply(style: self.style)
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Configuration
+    
     func configure(withItem item: MusicTrack, number: Int) {
         titleLabel.text = item.title
         durationLabel.text = item.duration
@@ -56,27 +67,26 @@ final class MusicTrackCell: UITableViewCell, Reusable {
         titleLabel.alpha = enabled ? 1.0 : 0.5
     }
     
+    // MARK: Layout
+    
+    private func makeLayout() -> LayoutComponent {
+        return Container(
+            h: .h1(leading: 8, trailing: 8),
+            v: .v1(top: 8, bottom: 8), relative: false,
+            inner: Row(spacing: 8, [
+                RowItem(Component(playButton), length: .abs(44)),
+                RowItem(Component(titleLabel), length: .weight(1)),
+                RowItem(Component(durationLabel), length: .abs(44)),
+                RowItem(Component(likeButton), length: .abs(44)),
+                ]
+            )
+        )
+    }
+    private(set) lazy var layout = makeLayout()
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        let container = layout(
-            LayoutRules(h: .h1(leading: 8, trailing: 8), v: .v1(top: 8, bottom: 8)),
-            inBounds: bounds
-        )
-        let durationLabelWidth = durationLabel
-            .sizeThatFits(CGSize(width: 44, height: CGFloat.greatestFiniteMagnitude)).width
-        stackRow(
-            alignment: .fill, spacing: 8, [
-                StackItem({ self.playButton.frame = $0 }, length: .abs(44)),
-                StackItem({ self.titleLabel.frame = $0 }, length: .weight(1)),
-                StackItem({ self.durationLabel.frame = $0 }, length: .abs(durationLabelWidth)),
-                StackItem({ self.likeButton.frame = $0 }, length: .abs(44))
-            ],
-            inFrame: container
-        )
+        layout.performLayout(inFrame: bounds)
         separatorInset.left = titleLabel.frame.minX
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
