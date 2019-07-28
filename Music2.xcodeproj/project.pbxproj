@@ -67,7 +67,6 @@
 		F5D631C1220F637F008AB5EE /* UITableView+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D631C0220F637F008AB5EE /* UITableView+Rx.swift */; };
 		F5D631C3220F6C88008AB5EE /* RxExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D631C2220F6C88008AB5EE /* RxExt.swift */; };
 		F5D631C6220F6E31008AB5EE /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D631C5220F6E31008AB5EE /* Album.swift */; };
-		F5DBE08B2247A83300E5CE44 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DBE08A2247A83300E5CE44 /* Layout.swift */; };
 		F5E16C6221F49CC300C8A732 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E16C6121F49CC300C8A732 /* AppDelegate.swift */; };
 		F5E16C6421F49CC300C8A732 /* AlbumsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E16C6321F49CC300C8A732 /* AlbumsListViewController.swift */; };
 		F5E16C6C21F49CC400C8A732 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F5E16C6A21F49CC400C8A732 /* LaunchScreen.storyboard */; };
@@ -166,7 +165,6 @@
 		F5D631C0220F637F008AB5EE /* UITableView+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableView+Rx.swift"; sourceTree = "<group>"; };
 		F5D631C2220F6C88008AB5EE /* RxExt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RxExt.swift; sourceTree = "<group>"; };
 		F5D631C5220F6E31008AB5EE /* Album.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
-		F5DBE08A2247A83300E5CE44 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
 		F5E16C5E21F49CC300C8A732 /* Music2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Music2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5E16C6121F49CC300C8A732 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F5E16C6321F49CC300C8A732 /* AlbumsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsListViewController.swift; sourceTree = "<group>"; };
@@ -243,7 +241,6 @@
 			children = (
 				F513A6902275C3840019A8C5 /* AutoLayout.swift */,
 				F513A68D2275C2A00019A8C5 /* ManualLayout */,
-				F5DBE0892247A6FC00E5CE44 /* YogaLayout (deprecated) */,
 			);
 			path = Layout;
 			sourceTree = "<group>";
@@ -443,14 +440,6 @@
 				F55CAFF7227C1EED00A9D502 /* ExploreResponse.swift */,
 			);
 			path = Music;
-			sourceTree = "<group>";
-		};
-		F5DBE0892247A6FC00E5CE44 /* YogaLayout (deprecated) */ = {
-			isa = PBXGroup;
-			children = (
-				F5DBE08A2247A83300E5CE44 /* Layout.swift */,
-			);
-			path = "YogaLayout (deprecated)";
 			sourceTree = "<group>";
 		};
 		F5E16C5521F49CC300C8A732 = {
@@ -702,44 +691,11 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Music2/Pods-Music2-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/Differentiator/Differentiator.framework",
-				"${BUILT_PRODUCTS_DIR}/Hero/Hero.framework",
-				"${BUILT_PRODUCTS_DIR}/Kingfisher/Kingfisher.framework",
-				"${BUILT_PRODUCTS_DIR}/Moya/Moya.framework",
-				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
-				"${BUILT_PRODUCTS_DIR}/Reusable/Reusable.framework",
-				"${BUILT_PRODUCTS_DIR}/RxAtomic/RxAtomic.framework",
-				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
-				"${BUILT_PRODUCTS_DIR}/RxDataSources/RxDataSources.framework",
-				"${BUILT_PRODUCTS_DIR}/RxFeedback/RxFeedback.framework",
-				"${BUILT_PRODUCTS_DIR}/RxOptional/RxOptional.framework",
-				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
-				"${BUILT_PRODUCTS_DIR}/Yoga/yoga.framework",
-				"${BUILT_PRODUCTS_DIR}/YogaKit/YogaKit.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Music2/Pods-Music2-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Differentiator.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Hero.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Kingfisher.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Moya.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reusable.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAtomic.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxDataSources.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxFeedback.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxOptional.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/yoga.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/YogaKit.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Music2/Pods-Music2-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -774,16 +730,11 @@
 			files = (
 			);
 			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Music2Tests/Pods-Music2Tests-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Result/Result.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Music2Tests/Pods-Music2Tests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Result.framework",
+				"${PODS_ROOT}/Target Support Files/Pods-Music2Tests/Pods-Music2Tests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -841,7 +792,6 @@
 				F5B65DE52219C27F00465444 /* UIViewControllerExt.swift in Sources */,
 				F55CAFFA227C58E000A9D502 /* Printing.swift in Sources */,
 				F513A6942275C4290019A8C5 /* UIGestureRecognizerExt.swift in Sources */,
-				F5DBE08B2247A83300E5CE44 /* Layout.swift in Sources */,
 				F55CAFE7227A1F0A00A9D502 /* AlbumCellView.swift in Sources */,
 				F55CE9A122231DBA001A882B /* Artist.swift in Sources */,
 				F5CA6006226C8DEB0094929B /* PagesViewController.swift in Sources */,

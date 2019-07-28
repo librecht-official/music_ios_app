@@ -1,0 +1,23 @@
+{
+  "name": "Layout",
+  "version": "0.0.1",
+  "summary": "Framework for creating declarative layout",
+  "description": "Provides a declarative API to easily calculate view's frames",
+  "homepage": "https://github.com/librecht-official/Layout",
+  "license": "MIT",
+  "authors": {
+    "Vladislav Librecht": "maclibrecht@gmail.com"
+  },
+  "platforms": {
+    "ios": "10.0"
+  },
+  "requires_arc": true,
+  "swift_versions": "4.2",
+  "source": {
+    "git": "https://github.com/librecht-official/Layout.git",
+    "tag": "0.0.2"
+  },
+  "source_files": "Layout/**/*.swift",
+  "exclude_files": "Example",
+  "swift_version": "4.2"
+}
