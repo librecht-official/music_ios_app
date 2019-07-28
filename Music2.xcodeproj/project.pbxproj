@@ -67,14 +67,11 @@
 		F5D631C3220F6C88008AB5EE /* RxExt.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D631C2220F6C88008AB5EE /* RxExt.swift */; };
 		F5D631C6220F6E31008AB5EE /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5D631C5220F6E31008AB5EE /* Album.swift */; };
 		F5E16C6221F49CC300C8A732 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E16C6121F49CC300C8A732 /* AppDelegate.swift */; };
-		F5E16C6421F49CC300C8A732 /* AlbumsListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E16C6321F49CC300C8A732 /* AlbumsListViewController.swift */; };
 		F5E16C6C21F49CC400C8A732 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F5E16C6A21F49CC400C8A732 /* LaunchScreen.storyboard */; };
-		F5E16C7721F4B23700C8A732 /* AlbumsList.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E16C7621F4B23700C8A732 /* AlbumsList.swift */; };
 		F5E16C7A21F4B5C300C8A732 /* Transformable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E16C7921F4B5C300C8A732 /* Transformable.swift */; };
 		F5E3D9932222CA4D003EC178 /* AVPlayerItem+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9922222CA4D003EC178 /* AVPlayerItem+Rx.swift */; };
 		F5E3D9952222DB16003EC178 /* Format.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5E3D9942222DB16003EC178 /* Format.swift */; };
 		F5F100A12219CB5A00C649E4 /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F100A02219CB5A00C649E4 /* AudioPlayer.swift */; };
-		F5F176D922103C2F004DC65A /* AlbumCell2.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176D822103C2F004DC65A /* AlbumCell2.swift */; };
 		F5F176DC22104542004DC65A /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176DB22104542004DC65A /* Color.swift */; };
 		F5F176DE22106599004DC65A /* AlbumTracksViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176DD22106599004DC65A /* AlbumTracksViewController.swift */; };
 		F5F176E122106970004DC65A /* Font.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F176E022106970004DC65A /* Font.swift */; };
@@ -165,15 +162,12 @@
 		F5D631C5220F6E31008AB5EE /* Album.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
 		F5E16C5E21F49CC300C8A732 /* Music2.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Music2.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F5E16C6121F49CC300C8A732 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		F5E16C6321F49CC300C8A732 /* AlbumsListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsListViewController.swift; sourceTree = "<group>"; };
 		F5E16C6B21F49CC400C8A732 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F5E16C6D21F49CC400C8A732 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F5E16C7621F4B23700C8A732 /* AlbumsList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsList.swift; sourceTree = "<group>"; };
 		F5E16C7921F4B5C300C8A732 /* Transformable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Transformable.swift; sourceTree = "<group>"; };
 		F5E3D9922222CA4D003EC178 /* AVPlayerItem+Rx.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVPlayerItem+Rx.swift"; sourceTree = "<group>"; };
 		F5E3D9942222DB16003EC178 /* Format.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Format.swift; sourceTree = "<group>"; };
 		F5F100A02219CB5A00C649E4 /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
-		F5F176D822103C2F004DC65A /* AlbumCell2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCell2.swift; sourceTree = "<group>"; };
 		F5F176DB22104542004DC65A /* Color.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Color.swift; sourceTree = "<group>"; };
 		F5F176DD22106599004DC65A /* AlbumTracksViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumTracksViewController.swift; sourceTree = "<group>"; };
 		F5F176E022106970004DC65A /* Font.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Font.swift; sourceTree = "<group>"; };
@@ -344,7 +338,6 @@
 			children = (
 				F513A69F2275F6AB0019A8C5 /* AudioPlayer */,
 				F513A69E2275F6760019A8C5 /* Explore */,
-				F5F176D722103BD0004DC65A /* AlbumsList (to remove) */,
 				F5F176DF2210659D004DC65A /* AlbumTracks */,
 				F5B65DDA2219B17900465444 /* Main */,
 			);
@@ -507,16 +500,6 @@
 				F5E16C7921F4B5C300C8A732 /* Transformable.swift */,
 			);
 			path = 5.Library;
-			sourceTree = "<group>";
-		};
-		F5F176D722103BD0004DC65A /* AlbumsList (to remove) */ = {
-			isa = PBXGroup;
-			children = (
-				F5F176D822103C2F004DC65A /* AlbumCell2.swift */,
-				F5E16C7621F4B23700C8A732 /* AlbumsList.swift */,
-				F5E16C6321F49CC300C8A732 /* AlbumsListViewController.swift */,
-			);
-			path = "AlbumsList (to remove)";
 			sourceTree = "<group>";
 		};
 		F5F176DF2210659D004DC65A /* AlbumTracks */ = {
@@ -793,7 +776,6 @@
 				F51E43B522EDC3D60035620F /* LayoutExt.swift in Sources */,
 				F513A6912275C3840019A8C5 /* AutoLayout.swift in Sources */,
 				F5D6319E220F0472008AB5EE /* Environment.swift in Sources */,
-				F5F176D922103C2F004DC65A /* AlbumCell2.swift in Sources */,
 				F587E3E5222C43C400915685 /* AudioPlayerSystem.swift in Sources */,
 				F55CAFF3227AF3D700A9D502 /* AlbumCardsCollectionCell.swift in Sources */,
 				F5D631C1220F637F008AB5EE /* UITableView+Rx.swift in Sources */,
@@ -812,7 +794,6 @@
 				F55CE9A322231DD9001A882B /* MusicTrack.swift in Sources */,
 				F55CAFEB227ACB3C00A9D502 /* UIImageExt.swift in Sources */,
 				F513A6A822760C080019A8C5 /* Feedback.swift in Sources */,
-				F5E16C7721F4B23700C8A732 /* AlbumsList.swift in Sources */,
 				F513A6A22275FA500019A8C5 /* ExploreViewController.swift in Sources */,
 				F55CAFF8227C1EED00A9D502 /* ExploreResponse.swift in Sources */,
 				F5225D812222EB0400ABEF0B /* SwiftExt.swift in Sources */,
@@ -829,7 +810,6 @@
 				F5F100A12219CB5A00C649E4 /* AudioPlayer.swift in Sources */,
 				F513A69D2275F4B70019A8C5 /* Strings.auto.swift in Sources */,
 				F5F176E322108F87004DC65A /* AlbumTracks.swift in Sources */,
-				F5E16C6421F49CC300C8A732 /* AlbumsListViewController.swift in Sources */,
 				F5D631A0220F0FB3008AB5EE /* Logger.swift in Sources */,
 				F5E16C7A21F4B5C300C8A732 /* Transformable.swift in Sources */,
 				F5E16C6221F49CC300C8A732 /* AppDelegate.swift in Sources */,

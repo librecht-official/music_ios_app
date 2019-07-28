@@ -31,16 +31,16 @@ enum AlbumTracks {
     }
     
     static func reduce(state: AlbumTracksState, command: AlbumTracksCommand) -> AlbumTracksState {
-        return state.transforming { newState in
-            switch command {
-            case let .didSelectItem(at: index):
-                newState.shouldPlayPlaylist = AudioPlayerPlaylist.album(
-                    newState.album,
-                    startFrom: index
-                )
-            case .didStartPlayingTrack:
-                newState.shouldPlayPlaylist = nil
-            }
+        var newState = state
+        switch command {
+        case let .didSelectItem(at: index):
+            newState.shouldPlayPlaylist = AudioPlayerPlaylist.album(
+                newState.album,
+                startFrom: index
+            )
+        case .didStartPlayingTrack:
+            newState.shouldPlayPlaylist = nil
         }
+        return newState
     }
 }
