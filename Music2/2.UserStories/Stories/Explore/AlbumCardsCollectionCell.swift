@@ -31,19 +31,28 @@ final class AlbumCardsCollectionCell: UITableViewCell, Reusable {
         collectionView.backgroundColor = UIColor.clear
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: Configuration
+    
     private var albums = [Album]()
     func configure(withAlbums albums: [Album]) {
         self.albums = albums
         collectionView.reloadData()
     }
     
+    private var onPlayButtonTap: ((Album) -> Void)?
+    func configure(onPlayButtonTap: @escaping ((Album) -> Void)) {
+        self.onPlayButtonTap = onPlayButtonTap
+    }
+    
+    // MARK: Layout
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         collectionView.frame = contentView.bounds
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
 
@@ -56,7 +65,11 @@ extension AlbumCardsCollectionCell: UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(for: indexPath, cellType: AlbumCardCell.self)
-        cell.configure(with: albums[indexPath.item])
+        let album = albums[indexPath.item]
+        cell.configure(with: album)
+        cell.configure(onPlayButtonTap: { [weak self] in
+            self?.onPlayButtonTap?(album)
+        })
         return cell
     }
 }

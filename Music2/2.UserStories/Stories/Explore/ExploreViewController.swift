@@ -13,15 +13,6 @@ import RxFeedback
 import RxDataSources
 import Reusable
 
-extension ExploreSection: SectionModelType {
-    typealias Item = ExploreItem
-    
-    init(original: ExploreSection, items: [ExploreItem]) {
-        self = original
-        self.items = items
-    }
-}
-
 final class ExploreViewController: UIViewController, ExploreNavigatable {
     typealias State = ExploreState
     typealias Command = ExploreCommand
@@ -43,14 +34,27 @@ final class ExploreViewController: UIViewController, ExploreNavigatable {
             case let .albumRow(album):
                 let cell = tv.dequeueReusableCell(for: ip, cellType: AlbumRowCell.self)
                 cell.configure(with: album)
+                cell.configure(onPlayButtonTap: { [weak self] in
+                    self?.play(album: album)
+                })
                 return cell
             case let .albumCardsCollection(albums):
                 let cell = tv.dequeueReusableCell(for: ip, cellType: AlbumCardsCollectionCell.self)
                 cell.configure(withAlbums: albums)
                 cell.didSelectAlbumObserver = self.didSelectAlbumInCard.asObserver()
+                cell.configure(onPlayButtonTap: { [weak self] album in
+                    self?.play(album: album)
+                })
                 return cell
             }
     })
+    
+    func play(album: Album) {
+        let playlist = AudioPlayerPlaylist.album(album, startFrom: 0)
+        let player = Environment.current.audioPlayer
+        player.command.accept(.setPlaylist(playlist))
+        player.command.accept(.play)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -194,5 +198,14 @@ private extension ExploreViewController {
         tableView.tableHeaderView = controller.searchBar
         definesPresentationContext = true
         return controller
+    }
+}
+
+extension ExploreSection: SectionModelType {
+    typealias Item = ExploreItem
+    
+    init(original: ExploreSection, items: [ExploreItem]) {
+        self = original
+        self.items = items
     }
 }

@@ -56,8 +56,14 @@ final class AlbumCardCell: UICollectionViewCell, Reusable {
         view.frame = contentView.bounds
     }
     
+    // MARK: Configuration
+    
     func configure(with album: Album) {
         view.configure(with: album)
+    }
+    
+    func configure(onPlayButtonTap: @escaping (() -> Void)) {
+        view.onPlayButtonTap = onPlayButtonTap
     }
     
     override var isSelected: Bool {

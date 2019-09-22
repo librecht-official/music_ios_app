@@ -9,6 +9,8 @@
 import UIKit
 import Kingfisher
 import Layout
+import RxSwift
+import RxCocoa
 
 struct AlbumCellViewModel {
     let info: AlbumInfoViewModel
@@ -73,10 +75,16 @@ final class AlbumCellView: UIView {
     private let likeButton = UIButton(type: .custom)
     private let disclosureIndicator = UIImageView()
     
+    private let disposeBag = DisposeBag()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         prepareLayout()
         apply(style: style)
+        
+        playButton.rx.tap
+            .bind(onNext: { [unowned self] in self.onPlayButtonTap?() })
+            .disposed(by: disposeBag)
     }
     
     private func prepareLayout() {
@@ -107,6 +115,8 @@ final class AlbumCellView: UIView {
         setNeedsLayout()
     }
     
+    var onPlayButtonTap: (() -> Void)?
+    
     var viewModel: AlbumCellViewModel {
         return AlbumCellViewModel(
             info: AlbumInfoViewModel(
@@ -116,6 +126,8 @@ final class AlbumCellView: UIView {
             )
         )
     }
+    
+    // MARK: Layout
     
     var makeLayout: ((AlbumCellViewModel, CGRect) -> AlbumViewLayout)?
     

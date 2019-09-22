@@ -1,5 +1,5 @@
 //
-//  AlbumCell.swift
+//  AlbumRowCell.swift
 //  Music2
 //
 //  Created by Vladislav Librecht on 29.04.2019.
@@ -25,13 +25,23 @@ final class AlbumRowCell: UITableViewCell, Reusable {
         selectedBackgroundView = UIView()
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         view.frame = contentView.bounds
     }
     
+    // MARK: Configuration
+    
     func configure(with album: Album) {
         view.configure(with: album)        
+    }
+    
+    func configure(onPlayButtonTap: @escaping (() -> Void)) {
+        view.onPlayButtonTap = onPlayButtonTap
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -50,9 +60,5 @@ final class AlbumRowCell: UITableViewCell, Reusable {
         UIView.animate(withDuration: style.selectionAnimationDuration) {
             self.view.backgroundColor = color
         }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }
