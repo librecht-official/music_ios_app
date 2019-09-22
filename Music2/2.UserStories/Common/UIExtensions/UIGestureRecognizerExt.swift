@@ -17,6 +17,7 @@ extension UIGestureRecognizer.State: CustomStringConvertible {
         case .ended: return "ended"
         case .failed: return "failed"
         case .possible: return "possible"
+        @unknown default: return "@unknown default"
         }
     }
 }

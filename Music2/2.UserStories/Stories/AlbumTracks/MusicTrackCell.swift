@@ -70,14 +70,14 @@ final class MusicTrackCell: UITableViewCell, Reusable {
     // MARK: Layout
     
     private func makeLayout() -> LayoutComponent {
-        return Container(
-            h: .h1(leading: 8, trailing: 8),
-            v: .v1(top: 8, bottom: 8), relative: false,
-            inner: Row(spacing: 8, [
-                RowItem(Component(playButton), length: .abs(44)),
-                RowItem(Component(titleLabel), length: .weight(1)),
-                RowItem(Component(durationLabel), length: .abs(44)),
-                RowItem(Component(likeButton), length: .abs(44)),
+        return VirtualContainer(
+            .h1(leading: 8, trailing: 8),
+            .v1(top: 8, bottom: 8),
+            sub: Row(spacing: 8, [
+                RowItem.fixed(width: .abs(44), Component(playButton)),
+                RowItem.fixed(width: .weight(1), Component(titleLabel)),
+                RowItem.fixed(width: .abs(44), Component(durationLabel)),
+                RowItem.fixed(width: .abs(44), Component(likeButton))
                 ]
             )
         )

@@ -41,6 +41,8 @@ extension AVPlayerItem.Status: CustomStringConvertible {
             return "readyToPlay"
         case .failed:
             return "failed"
+        @unknown default:
+            return "@unknown default"
         }
     }
 }

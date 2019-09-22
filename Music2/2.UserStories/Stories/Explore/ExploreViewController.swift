@@ -81,15 +81,15 @@ final class ExploreViewController: UIViewController, ExploreNavigatable {
                     .map { Command.didSelectAlbum($0) },
                 rc.rx.pullToRefreshSignal.map { Command.reFetch },
             ]
-            return Bindings(subscriptions: stateToUI, mutations: uiToState)
+            return Bindings(subscriptions: stateToUI, events: uiToState)
         }
         
-        let bindNavigation: Feedback = navigationBinding(query: { $0.navigationRequest }) {
+        let bindNavigation: Feedback = navigationBinding(request: { $0.navigationRequest }) {
             [unowned self] route -> Signal<Command> in
                 return self.navigator.navigate(to: route).map { Command.didOpenAlbum }
             }
         
-        let bindAPI: Feedback = react(query: { $0.loadingRequest }) { _ -> Signal<Command> in
+        let bindAPI: Feedback = react(request: { $0.loadingRequest }) { _ -> Signal<Command> in
             return Environment.current.api.music.explore().asSignal()
                 .map { Command.didFetch($0) }
         }

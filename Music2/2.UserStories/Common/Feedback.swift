@@ -13,10 +13,25 @@ import RxFeedback
 typealias CocoaFeedback<State, Command> = (Driver<State>) -> Signal<Command>
 
 /// Special wrapper function to create navigation binding, allowing navigation by the same query more then once in a row
-func navigationBinding<State, Query, Mutation>(
-    query: @escaping (State) -> Query?,
-    effects: @escaping (Query) -> Signal<Mutation>
-    ) -> (Driver<State>) -> Signal<Mutation> {
+func navigationBinding<State, Query, Event>(
+    request: @escaping (State) -> Query?,
+    effects: @escaping (Query) -> Signal<Event>
+    ) -> (Driver<State>) -> Signal<Event> {
     
-    return react(query: query, areEqual: { (_, _) in false }, effects: effects)
+    return react(request: { state -> NeverEqual<Query>? in
+        request(state).map(NeverEqual.init)
+    }) { neverEqual -> Signal<Event> in
+        effects(neverEqual.value)
+    }
+}
+
+private struct NeverEqual<T>: Equatable {
+    let value: T
+    init(_ value: T) {
+        self.value = value
+    }
+    
+    static func == (lhs: NeverEqual<T>, rhs: NeverEqual<T>) -> Bool {
+        return false
+    }
 }

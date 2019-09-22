@@ -7,6 +7,9 @@
 //
 
 import Foundation
-import Result
 
-typealias NetworkingResult<T: Decodable> = Result<T, AnyError>
+typealias NetworkingResult<T: Decodable> = Result<T, NetworkingError>
+
+enum NetworkingError: Error {
+    case api(Error)
+}

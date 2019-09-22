@@ -8,19 +8,18 @@
 
 import RxSwift
 import RxCocoa
-import Result
 import RxDataSources
 
 extension Single where Element: Decodable {
     func asSignal() -> Signal<NetworkingResult<Element>> {
         return self.asObservable()
             .map { NetworkingResult<Element>.success($0) }
-            .asSignal(onErrorRecover: { Signal.just(.failure(AnyError($0))) })
+            .asSignal(onErrorRecover: { Signal.just(.failure(.api($0))) })
     }
 }
 
 extension TableViewSectionedDataSource {
-    func item(at indexPath: IndexPath) -> I? {
+    func item(at indexPath: IndexPath) -> Item? {
         return self.sectionModels.element(at: indexPath.section)?.items.element(at: indexPath.row)
     }
 }

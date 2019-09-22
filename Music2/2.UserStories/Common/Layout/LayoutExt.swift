@@ -8,14 +8,6 @@
 
 import Layout
 
-// TODO: These are useful in practice. Move them into framework
-
-public extension Component {
-    public init(_ frameHolder: FrameHolder) {
-        self.init(frameHolder, .zero, .zero)
-    }
-}
-
 /// Leaf node of the layout tree with aspect ratio layout rule.
 ///
 /// Leaf `LayoutComponent` which calculates frame for it's `frameHolder` using special aspect ratio layout rule.

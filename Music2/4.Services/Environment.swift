@@ -47,7 +47,7 @@ func makeAppEnvironment() -> Environment {
         api: NetworkingAPI(
             music: MusicAPINetworkingClient(
                 config: APIConfiguration(
-                    baseURL: URL(string: "http://192.168.0.4:8000")!,
+                    baseURL: URL(string: "http://192.168.0.2:8000")!,
                     logger: { print($0) }
                 )
             )

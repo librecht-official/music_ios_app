@@ -54,20 +54,18 @@ final class VolumeControl: UIView {
         
         return Row(
             spacing: 4, [
-                RowItem(
+                RowItem.fixed(width: .abs(minVolSize.width),
                     Component(
                         minVolumeImageView,
                         .zero, .v4(centerY: .abs(0), height: .abs(minVolSize.height))
-                    ),
-                    length: .abs(minVolSize.width)
+                    )
                 ),
-                RowItem(Component(volumeSlider), length: .weight(1)),
-                RowItem(
+                RowItem.fixed(width: .weight(1), Component(volumeSlider)),
+                RowItem.fixed(width:.abs(maxVolSize.width),
                     Component(
                         maxVolumeImageView,
                         .zero, .v4(centerY: .abs(0), height: .abs(maxVolSize.height))
-                    ),
-                    length: .abs(maxVolSize.width)
+                    )
                 )
             ]
         )

@@ -54,9 +54,9 @@ final class PlaybackControl: UIView {
     // MARK: Layout
     
     private lazy var layout = Row(spacing: 4, [
-        RowItem(Component(fastBackwardButton), length: .weight(1)),
-        RowItem(Component(playButton), length: .weight(1)),
-        RowItem(Component(fastForwardButton), length: .weight(1))
+        RowItem.fixed(width: .weight(1), Component(fastBackwardButton)),
+        RowItem.fixed(width: .weight(1), Component(playButton)),
+        RowItem.fixed(width: .weight(1), Component(fastForwardButton))
     ])
     
     override func layoutSubviews() {

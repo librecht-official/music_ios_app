@@ -119,36 +119,35 @@ class AdaptiveAudioPlayerView: UIView {
         )
     }
     
-    private(set) lazy var maximizedLayout = Container(
-        h: .h1(leading: 24, trailing: 24), v: .v1(top: 32, bottom: 32),
-        relative: false,
-        inner: Column(spacing: 16, [
-            ColumnItem(
+    private(set) lazy var maximizedLayout = VirtualContainer(
+        .h1(leading: 24, trailing: 24), .v1(top: 32, bottom: 32),
+        sub: Column(spacing: 16, [
+            ColumnItem.fixed(height: .weight(3),
                 AspectRatioComponent(
                     coverImageView, ratio: 1,
                     .v(.v1(top: 0, bottom: 0), and: .centerX(.abs(0)))
                 ),
-                length: .weight(3), bottom: 16
+                Insets(bottom: 16)
             ),
-            ColumnItem(sliderLayout, length: .abs(28)),
-            ColumnItem(
+            ColumnItem.fixed(height: .abs(28), sliderLayout),
+            ColumnItem.fixed(height: .abs(20),
                 Row(spacing: 8, [
-                    RowItem(Component(currentTimeLabel), length: .weight(1)),
-                    RowItem(Component(totalTimeLabel), length: .weight(1)),
+                    RowItem.fixed(width: .weight(1), Component(currentTimeLabel)),
+                    RowItem.fixed(width: .weight(1), Component(totalTimeLabel)),
                     ]
                 ),
-                length: .abs(20), top: -8
+                Insets(top: -8)
             ),
-            ColumnItem(Component(titleLabel), length: .weight(1)),
-            ColumnItem(Component(playbackControl), length: .weight(1), top: 8),
-            ColumnItem(Component(volumeControl), length: .weight(1)),
+            ColumnItem.fixed(height: .weight(1), Component(titleLabel)),
+            ColumnItem.fixed(height: .weight(1), Component(playbackControl), Insets(top: 8)),
+            ColumnItem.fixed(height: .weight(1), Component(volumeControl)),
             ]
         )
     )
     
     private lazy var sliderLayout = Container(
-        sliderBackground, h: .zero, v: .zero, relative: false,
-        inner: Component(slider)
+        sliderBackground, .zero, .zero, relative: false,
+        sub: Component(slider)
     )
     
     private func performMaximizedLayout() {
@@ -161,24 +160,23 @@ class AdaptiveAudioPlayerView: UIView {
         volumeControl.alpha = 1
     }
     
-    private(set) lazy var minimizedLayout = Container(
-        h: .h1(leading: 6, trailing: 6), v: .v2(top: 6, height: .abs(80)),
-        relative: false,
-        inner: Column(spacing: 12, [
-            ColumnItem(sliderLayout, length: .abs(28)),
-            ColumnItem(
+    private(set) lazy var minimizedLayout = VirtualContainer(
+        .h1(leading: 6, trailing: 6), .v2(top: 6, height: .abs(80)),
+        sub: Column(spacing: 12, [
+            ColumnItem.fixed(height: .abs(28), sliderLayout),
+            ColumnItem.fixed(
+                height: .weight(1),
                 Row(spacing: 8, [
-                    RowItem(Component(playbackControl), length: .weight(2), top: 4, bottom: 4),
-                    RowItem(Component(smallTitleLabel), length: .weight(3)),
-                    RowItem(
+                    RowItem.fixed(width: .weight(2), Component(playbackControl), Insets(top: 4, bottom: 4)),
+                    RowItem.fixed(width: .weight(3), Component(smallTitleLabel)),
+                    RowItem.fixed(width: .abs(38),
                         AspectRatioComponent(
                             smallCoverImageView, ratio: 1,
-                            .h(.h1(leading: 0, trailing: 0), and: .centerY(.abs(0)))),
-                        length: .abs(38)
-                    )
+                            .h(.h1(leading: 0, trailing: 0), and: .centerY(.abs(0)))
+                        ))
                     ]
                 ),
-                length: .weight(1), leading: 10, trailing: 10
+                Insets(leading: 10, trailing: 10)
             )
             ]
         )

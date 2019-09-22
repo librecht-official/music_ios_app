@@ -73,11 +73,11 @@ class AlbumTracksViewController: UIViewController, NavigationBarCustomization {
                     .map { Command.didSelectItem(at: $0.row) }
                     .asSignal(onErrorSignalWith: Signal.empty())
             ]
-            return Bindings(subscriptions: stateToUI, mutations: uiToState)
+            return Bindings(subscriptions: stateToUI, events: uiToState)
         }
         
         let bindAudio: (Driver<State>) -> Signal<Command> = react(
-            query: { $0.shouldPlayPlaylist },
+            request: { $0.shouldPlayPlaylist },
             effects: { playlist in
                 env.audioPlayer.command.accept(.setPlaylist(playlist))
                 env.audioPlayer.command.accept(.play)

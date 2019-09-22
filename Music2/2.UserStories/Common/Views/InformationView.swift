@@ -86,8 +86,6 @@ final class InformationView: UIView {
     }
 }
 
-extension UIImageView: SizeAware {}
-
 // MARK: - InformationViewController
 
 final class InformationViewController: UIViewController {

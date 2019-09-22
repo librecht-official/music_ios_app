@@ -143,6 +143,8 @@ final class BottomSheetController {
                 self.currentState = state
             case .current:
                 break
+            @unknown default:
+                break
             }
             
             switch self.currentState {

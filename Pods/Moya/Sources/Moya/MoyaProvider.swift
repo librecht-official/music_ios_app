@@ -1,5 +1,4 @@
 import Foundation
-import Result
 
 /// Closure to be executed when a request has completed.
 public typealias Completion = (_ result: Result<Moya.Response, MoyaError>) -> Void
@@ -24,12 +23,20 @@ public struct ProgressResponse {
 
     /// The fraction of the overall work completed by the progress object.
     public var progress: Double {
-        return progressObject?.fractionCompleted ?? 1.0
+        if completed {
+            return 1.0
+        } else if let progressObject = progressObject, progressObject.totalUnitCount > 0 {
+            // if the Content-Length is specified we can rely on `fractionCompleted`
+            return progressObject.fractionCompleted
+        } else {
+            // if the Content-Length is not specified, return progress 0.0 until it's completed
+            return 0.0
+        }
     }
 
     /// A Boolean value stating whether the request is completed.
     public var completed: Bool {
-        return progress == 1.0 && response != nil
+        return response != nil
     }
 }
 
@@ -68,8 +75,7 @@ open class MoyaProvider<Target: TargetType>: MoyaProviderType {
     /// of a request for a given `TargetType`.
     public let stubClosure: StubClosure
 
-    /// The manager for the session.
-    public let manager: Manager
+    public let session: Session
 
     /// A list of plugins.
     /// e.g. for logging, network activity indicator or credentials.
@@ -87,14 +93,14 @@ open class MoyaProvider<Target: TargetType>: MoyaProviderType {
                 requestClosure: @escaping RequestClosure = MoyaProvider.defaultRequestMapping,
                 stubClosure: @escaping StubClosure = MoyaProvider.neverStub,
                 callbackQueue: DispatchQueue? = nil,
-                manager: Manager = MoyaProvider<Target>.defaultAlamofireManager(),
+                session: Session = MoyaProvider<Target>.defaultAlamofireSession(),
                 plugins: [PluginType] = [],
                 trackInflights: Bool = false) {
 
         self.endpointClosure = endpointClosure
         self.requestClosure = requestClosure
         self.stubClosure = stubClosure
-        self.manager = manager
+        self.session = session
         self.plugins = plugins
         self.trackInflights = trackInflights
         self.callbackQueue = callbackQueue
@@ -170,17 +176,17 @@ public extension MoyaProvider {
     // at least add some class functions to allow easy access to common stubbing closures.
 
     /// Do not stub.
-    public final class func neverStub(_: Target) -> Moya.StubBehavior {
+    final class func neverStub(_: Target) -> Moya.StubBehavior {
         return .never
     }
 
     /// Return a response immediately.
-    public final class func immediatelyStub(_: Target) -> Moya.StubBehavior {
+    final class func immediatelyStub(_: Target) -> Moya.StubBehavior {
         return .immediate
     }
 
     /// Return a response after a delay.
-    public final class func delayedStub(_ seconds: TimeInterval) -> (Target) -> Moya.StubBehavior {
+    final class func delayedStub(_ seconds: TimeInterval) -> (Target) -> Moya.StubBehavior {
         return { _ in return .delayed(seconds: seconds) }
     }
 }

@@ -85,7 +85,7 @@ public struct MusicAPINetworkingClient: MusicAPI {
         let target = MusicAPITarget(config: config, route: route)
         let parser = self.parser
         return provider.rx.request(target)
-            .delay(1, scheduler: MainScheduler.instance)
+            .delay(.seconds(1), scheduler: MainScheduler.instance)
             .filterSuccessfulStatusCodes()
             .map { try parser.parse(moyaResponse: $0) }
     }

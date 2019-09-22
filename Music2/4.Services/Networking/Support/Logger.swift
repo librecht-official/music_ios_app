@@ -7,7 +7,6 @@
 //
 
 import Moya
-import Result
 
 struct Logger: PluginType {
     let log: APIConfiguration.Logging?

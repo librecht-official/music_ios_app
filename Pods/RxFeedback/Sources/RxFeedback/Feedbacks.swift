@@ -6,261 +6,284 @@
 //  Copyright © 2017 Krunoslav Zaher. All rights reserved.
 //
 
-import RxSwift
 import RxCocoa
+import RxSwift
 
 /**
- * State: State type of the system.
- * Query: Subset of state used to control the feedback loop.
+ State: State type of the system.
+ Request: Subset of state used to control the feedback loop.
 
- When `query` returns a value, that value is being passed into `effects` lambda to decide which effects should be performed.
- In case new `query` is different from the previous one, new effects are calculated by using `effects` lambda and then performed.
+ When `request` returns a value, that value is being passed into `effects` lambda to decide which effects should be performed.
+ In case new `request` is different from the previous one, new effects are calculated by using `effects` lambda and then performed.
 
- When `query` returns `nil`, feedback loops doesn't perform any effect.
+ When `request` returns `nil`, feedback loops doesn't perform any effect.
 
- - parameter query: Part of state that controls feedback loop.
- - parameter areEqual: Part of state that controls feedback loop.
- - parameter effects: Chooses which effects to perform for certain query result.
- - returns: Feedback loop performing the effects.
+ - parameter request: The request to perform some effects.
+ - parameter effects: The request effects.
+ - returns: The feedback loop performing the effects.
  */
-public func react<State, Query, Mutation>(
-    query: @escaping (State) -> Query?,
-    areEqual: @escaping (Query, Query) -> Bool,
-    effects: @escaping (Query) -> Observable<Mutation>
-    ) -> (ObservableSchedulerContext<State>) -> Observable<Mutation> {
-    return { state in
-        return state.map(query)
-            .distinctUntilChanged { lhs, rhs in
-                switch (lhs, rhs) {
-                case (.none, .none): return true
-                case (.none, .some): return false
-                case (.some, .none): return false
-                case (.some(let lhs), .some(let rhs)): return areEqual(lhs, rhs)
-                }
-            }
-            .flatMapLatest { (control: Query?) -> Observable<Mutation> in
-                guard let control = control else {
-                    return Observable<Mutation>.empty()
-                }
-
-                return effects(control)
-                    .enqueue(state.scheduler)
-            }
-    }
+public func react<State, Request: Equatable, Event>(
+    request: @escaping (State) -> Request?,
+    effects: @escaping (Request) -> Observable<Event>
+) -> (ObservableSchedulerContext<State>) -> Observable<Event> {
+    return react(
+        requests: { request($0).map { value in [ConstHashable(value: value): value] } ?? [:] },
+        effects: { initialValue, _ in
+            return effects(initialValue)
+        }
+    )
 }
 
 /**
- * State: State type of the system.
- * Query: Subset of state used to control the feedback loop.
+ State: State type of the system.
+ Request: Subset of state used to control the feedback loop.
 
- When `query` returns a value, that value is being passed into `effects` lambda to decide which effects should be performed.
- In case new `query` is different from the previous one, new effects are calculated by using `effects` lambda and then performed.
+ When `request` returns a value, that value is being passed into `effects` lambda to decide which effects should be performed.
+ In case new `request` is different from the previous one, new effects are calculated by using `effects` lambda and then performed.
 
- When `query` returns `nil`, feedback loops doesn't perform any effect.
+ When `request` returns `nil`, feedback loops doesn't perform any effect.
 
- - parameter query: Part of state that controls feedback loop.
- - parameter effects: Chooses which effects to perform for certain query result.
- - returns: Feedback loop performing the effects.
+ - parameter request: The request to perform some effects.
+ - parameter effects: The request effects.
+ - returns: The feedback loop performing the effects.
  */
-public func react<State, Query: Equatable, Mutation>(
-        query: @escaping (State) -> Query?,
-        effects: @escaping (Query) -> Observable<Mutation>
-    ) -> (ObservableSchedulerContext<State>) -> Observable<Mutation> {
-    return react(query: query, areEqual: { $0 == $1 }, effects: effects)
-}
-
-/**
- * State: State type of the system.
- * Query: Subset of state used to control the feedback loop.
-
- When `query` returns a value, that value is being passed into `effects` lambda to decide which effects should be performed.
- In case new `query` is different from the previous one, new effects are calculated by using `effects` lambda and then performed.
-
- When `query` returns `nil`, feedback loops doesn't perform any effect.
-
- - parameter query: Part of state that controls feedback loop.
- - parameter areEqual: Part of state that controls feedback loop.
- - parameter effects: Chooses which effects to perform for certain query result.
- - returns: Feedback loop performing the effects.
- */
-public func react<State, Query, Mutation>(
-    query: @escaping (State) -> Query?,
-    areEqual: @escaping (Query, Query) -> Bool,
-    effects: @escaping (Query) -> Signal<Mutation>
-    ) -> (Driver<State>) -> Signal<Mutation> {
+public func react<State, Request: Equatable, Event>(
+    request: @escaping (State) -> Request?,
+    effects: @escaping (Request) -> Signal<Event>
+) -> (Driver<State>) -> Signal<Event> {
     return { state in
         let observableSchedulerContext = ObservableSchedulerContext<State>(
             source: state.asObservable(),
-            scheduler: Signal<Mutation>.SharingStrategy.scheduler.async
+            scheduler: Signal<Event>.SharingStrategy.scheduler.async
         )
-        return react(query: query, areEqual: areEqual, effects: { effects($0).asObservable() })(observableSchedulerContext)
+        return react(request: request, effects: { effects($0).asObservable() })(observableSchedulerContext)
+            .asSignal(onErrorSignalWith: .empty()) }
+}
+
+/**
+ State: State type of the system.
+ Request: Subset of state used to control the feedback loop.
+
+ When `request` returns some set of values, each value is being passed into `effects` lambda to decide which effects should be performed.
+
+ * Effects are not interrupted for elements in the new `request` that were present in the `old` request.
+ * Effects are cancelled for elements present in `old` request but not in `new` request.
+ * In case new elements are present in `new` request (and not in `old` request) they are being passed to the `effects` lambda and resulting effects are being performed.
+
+ - parameter requests: requests to perform some effects.
+ - parameter effects: The request effects.
+ - returns: The feedback loop performing the effects.
+ */
+public func react<State, Request, Event>(
+    requests: @escaping (State) -> Set<Request>,
+    effects: @escaping (Request) -> Observable<Event>
+) -> (ObservableSchedulerContext<State>) -> Observable<Event> {
+    return react(
+        requests: { Dictionary(requests($0).map { ($0, $0) }, uniquingKeysWith: { first, _ in first }) },
+        effects: { initialValue, _ in
+            return effects(initialValue)
+        })
+}
+
+/**
+ State: State type of the system.
+ Request: Subset of state used to control the feedback loop.
+
+ When `request` returns some set of values, each value is being passed into `effects` lambda to decide which effects should be performed.
+
+ * Effects are not interrupted for elements in the new `request` that were present in the `old` request.
+ * Effects are cancelled for elements present in `old` request but not in `new` request.
+ * In case new elements are present in `new` request (and not in `old` request) they are being passed to the `effects` lambda and resulting effects are being performed.
+
+ - parameter requests: Requests to perform some effects.
+ - parameter effects: The request effects.
+ - returns: The feedback loop performing the effects.
+ */
+public func react<State, Request, Event>(
+    requests: @escaping (State) -> Set<Request>,
+    effects: @escaping (Request) -> Signal<Event>
+) -> (Driver<State>) -> Signal<Event> {
+    return { (state: Driver<State>) -> Signal<Event> in
+        let observableSchedulerContext = ObservableSchedulerContext<State>(
+            source: state.asObservable(),
+            scheduler: Signal<Event>.SharingStrategy.scheduler.async
+        )
+        return react(requests: requests, effects: { effects($0).asObservable() })(observableSchedulerContext)
             .asSignal(onErrorSignalWith: .empty())
     }
 }
 
-/**
- * State: State type of the system.
- * Query: Subset of state used to control the feedback loop.
+/// This is defined outside of `react` because Swift compiler generates an `error` :(.
+fileprivate class RequestLifetimeTracking<Request: Equatable, RequestID: Hashable, Event> {
+    class LifetimeToken {}
 
- When `query` returns a value, that value is being passed into `effects` lambda to decide which effects should be performed.
- In case new `query` is different from the previous one, new effects are calculated by using `effects` lambda and then performed.
-
- When `query` returns `nil`, feedback loops doesn't perform any effect.
-
- - parameter query: Part of state that controls feedback loop.
- - parameter effects: Chooses which effects to perform for certain query result.
- - returns: Feedback loop performing the effects.
- */
-public func react<State, Query: Equatable, Mutation>(
-    query: @escaping (State) -> Query?,
-    effects: @escaping (Query) -> Signal<Mutation>
-) -> (Driver<State>) -> Signal<Mutation> {
-    return { state in
-        let observableSchedulerContext = ObservableSchedulerContext<State>(
-            source: state.asObservable(),
-            scheduler: Signal<Mutation>.SharingStrategy.scheduler.async
+    let state = AsyncSynchronized(
+        (
+            isDisposed: false,
+            lifetimeByIdentifier: [RequestID: RequestLifetime]()
         )
-        return react(query: query, effects: { effects($0).asObservable() })(observableSchedulerContext)
-            .asSignal(onErrorSignalWith: .empty())
+    )
+
+    typealias RequestLifetime = (
+        subscription: Disposable,
+        lifetimeIdentifier: LifetimeToken,
+        latestRequest: BehaviorSubject<Request>
+    )
+
+    let effects: (_ initial: Request, _ state: Observable<Request>) -> Observable<Event>
+    let scheduler: ImmediateSchedulerType
+    let observer: AnyObserver<Event>
+
+    init(
+        effects: @escaping (_ initial: Request, _ state: Observable<Request>) -> Observable<Event>,
+        scheduler: ImmediateSchedulerType,
+        observer: AnyObserver<Event>
+    ) {
+        self.effects = effects
+        self.scheduler = scheduler
+        self.observer = observer
     }
-}
 
-/**
- * State: State type of the system.
- * Query: Subset of state used to control the feedback loop.
+    func forwardRequests(_ requests: [RequestID: Request]) {
+        self.state.async { state in
+            guard !state.isDisposed else { return }
+            var lifetimeToUnsubscribeByIdentifier = state.lifetimeByIdentifier
+            for (requestID, request) in requests {
+                if let requestLifetime = state.lifetimeByIdentifier[requestID] {
+                    lifetimeToUnsubscribeByIdentifier.removeValue(forKey: requestID)
+                    guard (try? requestLifetime.latestRequest.value()) != request else { continue }
+                    requestLifetime.latestRequest.onNext(request)
+                } else {
+                    let subscription = SingleAssignmentDisposable()
+                    let latestRequestSubject = BehaviorSubject(value: request)
+                    let lifetime = LifetimeToken()
+                    state.lifetimeByIdentifier[requestID] = (
+                        subscription: subscription,
+                        lifetimeIdentifier: lifetime,
+                        latestRequest: latestRequestSubject
+                    )
+                    let requestsSubscription = self.effects(request, latestRequestSubject.asObservable())
+                        .observeOn(self.scheduler)
+                        .subscribe { event in
+                            self.state.async { state in
+                                guard state.lifetimeByIdentifier[requestID]?.lifetimeIdentifier === lifetime else { return }
+                                guard !state.isDisposed else { return }
+                                switch event {
+                                case .next(let event):
+                                    self.observer.onNext(event)
+                                case .error(let error):
+                                    self.observer.onError(error)
+                                case .completed:
+                                    break
+                                }
+                            }
+                        }
 
- When `query` returns a value, that value is being passed into `effects` lambda to decide which effects should be performed.
- In case new `query` is different from the previous one, new effects are calculated by using `effects` lambda and then performed.
-
- When `query` returns `nil`, feedback loops doesn't perform any effect.
-
- - parameter query: Part of state that controls feedback loop.
- - parameter effects: Chooses which effects to perform for certain query result.
- - returns: Feedback loop performing the effects.
- */
-public func react<State, Query, Mutation>(
-    query: @escaping (State) -> Query?,
-    effects: @escaping (Query) -> Observable<Mutation>
-) -> (ObservableSchedulerContext<State>) -> Observable<Mutation> {
-    return { state in
-        return state.map(query)
-            .distinctUntilChanged { $0 != nil }
-            .flatMapLatest { (control: Query?) -> Observable<Mutation> in
-                guard let control = control else {
-                    return Observable<Mutation>.empty()
+                    subscription.setDisposable(requestsSubscription)
                 }
+            }
 
-                return effects(control)
-                    .enqueue(state.scheduler)
+            lifetimeToUnsubscribeByIdentifier.keys.forEach {
+              state.lifetimeByIdentifier.removeValue(forKey: $0)
+            }
+            lifetimeToUnsubscribeByIdentifier.values.forEach { $0.subscription.dispose() }
+        }
+    }
+
+    func dispose() {
+        self.state.async { state in
+            defer {
+                state.lifetimeByIdentifier = [:]
+                state.isDisposed = true
+            }
+
+            state.lifetimeByIdentifier.values.forEach { $0.subscription.dispose() }
         }
     }
 }
 
 /**
- * State: State type of the system.
- * Query: Subset of state used to control the feedback loop.
+ State: State type of the system.
+ Request: Subset of state used to control the feedback loop.
 
- When `query` returns a value, that value is being passed into `effects` lambda to decide which effects should be performed.
- In case new `query` is different from the previous one, new effects are calculated by using `effects` lambda and then performed.
+ For every uniquely identifiable request `effects` closure is invoked with the initial value of the request and future requests corresponding to the same identifier.
 
- When `query` returns `nil`, feedback loops doesn't perform any effect.
+ Subsequent equal values of request are not emitted from the effects state parameter.
 
- - parameter query: Part of state that controls feedback loop.
- - parameter effects: Chooses which effects to perform for certain query result.
- - returns: Feedback loop performing the effects.
+ - parameter requests: Requests to perform some effects.
+ - parameter effects: The request effects.
+ - parameter initial: Initial request.
+ - parameter state: Latest request state.
+ - returns: The feedback loop performing the effects.
  */
-public func react<State, Query, Mutation>(
-    query: @escaping (State) -> Query?,
-    effects: @escaping (Query) -> Signal<Mutation>
-) -> (Driver<State>) -> Signal<Mutation> {
-    return { state in
-        let observableSchedulerContext = ObservableSchedulerContext<State>(
-            source: state.asObservable(),
-            scheduler: Signal<Mutation>.SharingStrategy.scheduler.async
-        )
-        return react(query: query, effects: { effects($0).asObservable() })(observableSchedulerContext)
-            .asSignal(onErrorSignalWith: .empty())
-    }
-}
+public func react<State, Request: Equatable, RequestID, Event>(
+    requests: @escaping (State) -> [RequestID: Request],
+    effects: @escaping (_ initial: Request, _ state: Observable<Request>) -> Observable<Event>
+) -> (ObservableSchedulerContext<State>) -> Observable<Event> {
+    return { stateContext in
+        Observable.create { observer in
+            let state = RequestLifetimeTracking<Request, RequestID, Event>(
+                effects: effects,
+                scheduler: stateContext.scheduler,
+                observer: observer
+            )
 
-/**
- * State: State type of the system.
- * Query: Subset of state used to control the feedback loop.
+            let subscription = stateContext.source
+                .map(requests)
+                .subscribe { event in
+                    switch event {
+                    case .next(let requests):
+                        state.forwardRequests(requests)
+                    case .error(let error):
+                        observer.on(.error(error))
+                    case .completed:
+                        observer.on(.completed)
+                    }
+                }
 
- When `query` returns some set of values, each value is being passed into `effects` lambda to decide which effects should be performed.
-
- * Effects are not interrupted for elements in the new `query` that were present in the `old` query.
- * Effects are cancelled for elements present in `old` query but not in `new` query.
- * In case new elements are present in `new` query (and not in `old` query) they are being passed to the `effects` lambda and resulting effects are being performed.
-
- - parameter query: Part of state that controls feedback loop.
- - parameter effects: Chooses which effects to perform for certain query element.
- - returns: Feedback loop performing the effects.
- */
-public func react<State, Query, Mutation>(
-    query: @escaping (State) -> Set<Query>,
-    effects: @escaping (Query) -> Observable<Mutation>
-    ) -> (ObservableSchedulerContext<State>) -> Observable<Mutation> {
-    return { state in
-        let query = state.map(query)
-            .share(replay: 1)
-
-        let newQueries = Observable.zip(query, query.startWith(Set())) { $0.subtracting($1) }
-        let asyncScheduler = state.scheduler.async
-
-        return newQueries.flatMap { controls in
-            return Observable<Mutation>.merge(controls.map { control -> Observable<Mutation> in
-                return effects(control)
-                    .enqueue(state.scheduler)
-                    .takeUntilWithCompletedAsync(query.filter { !$0.contains(control) }, scheduler: asyncScheduler)
-            })
+            return Disposables.create {
+                state.dispose()
+                subscription.dispose()
+            }
         }
     }
 }
 
-extension ObservableType {
-    // This is important to avoid reentrancy issues. Completed mutation is only used for cleanup
-    fileprivate func takeUntilWithCompletedAsync<O>(_ other: Observable<O>, scheduler: ImmediateSchedulerType) -> Observable<E> {
-            // this little piggy will delay completed mutation
-            let completeAsSoonAsPossible = Observable<E>.empty().observeOn(scheduler)
-            return other
-                .take(1)
-                .map { _ in completeAsSoonAsPossible }
-                // this little piggy will ensure self is being run first
-                .startWith(self.asObservable())
-                // this little piggy will ensure that new mutations are being blocked immediatelly
-                .switchLatest()
-    }
-}
-
 /**
- * State: State type of the system.
- * Query: Subset of state used to control the feedback loop.
+ State: State type of the system.
+ Request: Subset of state used to control the feedback loop.
 
- When `query` returns some set of values, each value is being passed into `effects` lambda to decide which effects should be performed.
+ For every uniquely identifiable request `effects` closure is invoked with the initial value of the request and future requests corresponding to the same identifier.
 
- * Effects are not interrupted for elements in the new `query` that were present in the `old` query.
- * Effects are cancelled for elements present in `old` query but not in `new` query.
- * In case new elements are present in `new` query (and not in `old` query) they are being passed to the `effects` lambda and resulting effects are being performed.
+ Subsequent equal values of request are not emitted from the effects state parameter.
 
- - parameter query: Part of state that controls feedback loop.
- - parameter effects: Chooses which effects to perform for certain query element.
- - returns: Feedback loop performing the effects.
+ - parameter requests: Requests to perform some effects.
+ - parameter effects: The request effects.
+ - parameter initial: Initial request.
+ - parameter state: Latest request state.
+ - returns: The feedback loop performing the effects.
  */
-public func react<State, Query, Mutation>(
-    query: @escaping (State) -> Set<Query>,
-    effects: @escaping (Query) -> Signal<Mutation>
-    ) -> (Driver<State>) -> Signal<Mutation> {
-    return { (state: Driver<State>) -> Signal<Mutation> in
+public func react<State, Request: Equatable, RequestID, Event>(
+    requests: @escaping (State) -> [RequestID: Request],
+    effects: @escaping (_ initial: Request, _ state: Driver<Request>) -> Signal<Event>
+) -> (Driver<State>) -> Signal<Event> {
+    return { state in
         let observableSchedulerContext = ObservableSchedulerContext<State>(
             source: state.asObservable(),
-            scheduler: Signal<Mutation>.SharingStrategy.scheduler.async
+            scheduler: Signal<Event>.SharingStrategy.scheduler.async
         )
-        return react(query: query, effects: { effects($0).asObservable() })(observableSchedulerContext)
+        return react(
+            requests: requests,
+            effects: { initial, state in
+                effects(
+                    initial,
+                    state.asDriver(onErrorDriveWith: .empty())
+                ).asObservable()
+            }
+        )(observableSchedulerContext)
             .asSignal(onErrorSignalWith: .empty())
     }
 }
-
 
 extension Observable {
     fileprivate func enqueue(_ scheduler: ImmediateSchedulerType) -> Observable<Element> {
@@ -274,97 +297,109 @@ extension Observable {
 }
 
 /**
- Contains subscriptions and mutations.
+ Contains subscriptions and events.
  - `subscriptions` map a system state to UI presentation.
- - `mutations` map mutations from UI to mutations of a given system.
+ - `events` map events from UI to events of a given system.
 */
-public class Bindings<Mutation>: Disposable {
+public class Bindings<Event>: Disposable {
     fileprivate let subscriptions: [Disposable]
-    fileprivate let mutations: [Observable<Mutation>]
+    fileprivate let events: [Observable<Event>]
 
     /**
      - parameters:
         - subscriptions: mappings of a system state to UI presentation.
-        - mutations: mappings of mutations from UI to mutations of a given system
+        - events: mappings of events from UI to events of a given system
      */
-    public init(subscriptions: [Disposable], mutations: [Observable<Mutation>]) {
+    public init(subscriptions: [Disposable], events: [Observable<Event>]) {
         self.subscriptions = subscriptions
-        self.mutations = mutations
+        self.events = events
     }
 
     /**
      - parameters:
         - subscriptions: mappings of a system state to UI presentation.
-        - mutations: mappings of mutations from UI to mutations of a given system
+        - events: mappings of events from UI to events of a given system
      */
-    public init(subscriptions: [Disposable], mutations: [Signal<Mutation>]) {
+    public init(subscriptions: [Disposable], events: [Signal<Event>]) {
         self.subscriptions = subscriptions
-        self.mutations = mutations.map { $0.asObservable() }
+        self.events = events.map { $0.asObservable() }
     }
 
     public func dispose() {
-        for subscription in subscriptions {
+        for subscription in self.subscriptions {
             subscription.dispose()
         }
     }
 }
 
 /**
- Bi-directional binding of a system State to external state machine and mutations from it.
+ Bi-directional binding of a system State to external state machine and events from it.
  */
-public func bind<State, Mutation>(_ bindings: @escaping (ObservableSchedulerContext<State>) -> (Bindings<Mutation>)) -> (ObservableSchedulerContext<State>) -> Observable<Mutation> {
-    return { (state: ObservableSchedulerContext<State>) -> Observable<Mutation> in
-        return Observable<Mutation>.using({ () -> Bindings<Mutation> in
-            return bindings(state)
-        }, observableFactory: { (bindings: Bindings<Mutation>) -> Observable<Mutation> in
-            return Observable<Mutation>
-                    .merge(bindings.mutations)
+public func bind<State, Event>(_ bindings: @escaping (ObservableSchedulerContext<State>) -> (Bindings<Event>)) -> (ObservableSchedulerContext<State>) -> Observable<Event> {
+    return { (state: ObservableSchedulerContext<State>) -> Observable<Event> in
+        Observable<Event>.using(
+            { () -> Bindings<Event> in
+                bindings(state)
+            }, observableFactory: { (bindings: Bindings<Event>) -> Observable<Event> in
+                Observable<Event>
+                    .merge(bindings.events)
                     .concat(Observable.never())
                     .enqueue(state.scheduler)
-        })
+            }
+        )
     }
 }
 
 /**
- Bi-directional binding of a system State to external state machine and mutations from it.
+ Bi-directional binding of a system State to external state machine and events from it.
  Strongify owner.
  */
-public func bind<State, Mutation, WeakOwner>(_ owner: WeakOwner, _ bindings: @escaping (WeakOwner, ObservableSchedulerContext<State>) -> (Bindings<Mutation>))
-    -> (ObservableSchedulerContext<State>) -> Observable<Mutation> where WeakOwner: AnyObject {
-        return bind(bindingsStrongify(owner, bindings))
-}
-
-/**
- Bi-directional binding of a system State to external state machine and mutations from it.
- */
-public func bind<State, Mutation>(_ bindings: @escaping (Driver<State>) -> (Bindings<Mutation>)) -> (Driver<State>) -> Signal<Mutation> {
-    return { (state: Driver<State>) -> Signal<Mutation> in
-        return Observable<Mutation>.using({ () -> Bindings<Mutation> in
-            return bindings(state)
-        }, observableFactory: { (bindings: Bindings<Mutation>) -> Observable<Mutation> in
-            return Observable<Mutation>.merge(bindings.mutations).concat(Observable.never())
-        })
-            .enqueue(Signal<Mutation>.SharingStrategy.scheduler)
-            .asSignal(onErrorSignalWith: .empty())
-
-    }
-}
-
-/**
- Bi-directional binding of a system State to external state machine and mutations from it.
- Strongify owner.
- */
-public func bind<State, Mutation, WeakOwner>(_ owner: WeakOwner, _ bindings: @escaping (WeakOwner, Driver<State>) -> (Bindings<Mutation>))
-    -> (Driver<State>) -> Signal<Mutation> where WeakOwner: AnyObject {
+public func bind<State, Event, WeakOwner>(_ owner: WeakOwner, _ bindings: @escaping (WeakOwner, ObservableSchedulerContext<State>) -> (Bindings<Event>))
+    -> (ObservableSchedulerContext<State>) -> Observable<Event> where WeakOwner: AnyObject {
     return bind(bindingsStrongify(owner, bindings))
 }
 
-private func bindingsStrongify<Mutation, O, WeakOwner>(_ owner: WeakOwner, _ bindings: @escaping (WeakOwner, O) -> (Bindings<Mutation>))
-    -> (O) -> (Bindings<Mutation>) where WeakOwner: AnyObject {
-    return { [weak owner] state -> Bindings<Mutation> in
+/**
+ Bi-directional binding of a system State to external state machine and events from it.
+ */
+public func bind<State, Event>(_ bindings: @escaping (Driver<State>) -> (Bindings<Event>)) -> (Driver<State>) -> Signal<Event> {
+    return { (state: Driver<State>) -> Signal<Event> in
+        Observable<Event>.using(
+            { () -> Bindings<Event> in
+                bindings(state)
+            }, observableFactory: { (bindings: Bindings<Event>) -> Observable<Event> in
+                Observable<Event>.merge(bindings.events).concat(Observable.never())
+            }
+        )
+        .enqueue(Signal<Event>.SharingStrategy.scheduler)
+        .asSignal(onErrorSignalWith: .empty())
+    }
+}
+
+/**
+ Bi-directional binding of a system State to external state machine and events from it.
+ Strongify owner.
+ */
+public func bind<State, Event, WeakOwner>(_ owner: WeakOwner, _ bindings: @escaping (WeakOwner, Driver<State>) -> (Bindings<Event>))
+    -> (Driver<State>) -> Signal<Event> where WeakOwner: AnyObject {
+    return bind(bindingsStrongify(owner, bindings))
+}
+
+private func bindingsStrongify<Event, O, WeakOwner>(_ owner: WeakOwner, _ bindings: @escaping (WeakOwner, O) -> (Bindings<Event>))
+    -> (O) -> (Bindings<Event>) where WeakOwner: AnyObject {
+    return { [weak owner] state -> Bindings<Event> in
         guard let strongOwner = owner else {
-            return Bindings(subscriptions: [], mutations: [Observable<Mutation>]())
+            return Bindings(subscriptions: [], events: [Observable<Event>]())
         }
         return bindings(strongOwner, state)
     }
+}
+
+/// `Hashable` wrapper for `Equatable` value that returns const `hashValue`.
+///
+/// This looks like a performance issue, but it is ok when there is a single value present. Used in a `react` feedback loop.
+fileprivate struct ConstHashable<Value: Equatable>: Hashable {
+    var value: Value
+
+    func hash(into hasher: inout Hasher) { }
 }

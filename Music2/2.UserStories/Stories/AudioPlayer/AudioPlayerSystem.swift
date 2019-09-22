@@ -87,7 +87,7 @@ class AppAudioPlayerSystem: AudioPlayerSystem {
                     .asSignal(onErrorSignalWith: .never())
             ]
             
-            return Bindings(subscriptions: stateToAV, mutations: avToCommands)
+            return Bindings(subscriptions: stateToAV, events: avToCommands)
         }
         
         let system = Driver.system(

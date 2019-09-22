@@ -20,7 +20,7 @@ struct ExploreState: Transformable {
     
     var navigationRequest: ExploreNavigation.Route?
     
-    var loadingRequest: Void? { return shouldLoadPage ? () : nil }
+    var loadingRequest: Bool? { return shouldLoadPage ? true : nil }
 }
 
 struct ExploreSection: Equatable {

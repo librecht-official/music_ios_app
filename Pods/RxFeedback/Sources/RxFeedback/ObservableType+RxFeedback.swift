@@ -6,120 +6,145 @@
 //  Copyright © 2017 Krunoslav Zaher. All rights reserved.
 //
 
-import RxSwift
 import RxCocoa
+import RxSwift
 
-extension ObservableType where E == Any {
+extension ObservableType where Element == Any {
     /// Feedback loop
-    public typealias Feedback<State, Mutation> = (ObservableSchedulerContext<State>) -> Observable<Mutation>
+    public typealias Feedback<State, Event> = (ObservableSchedulerContext<State>) -> Observable<Event>
     public typealias FeedbackLoop = Feedback
 
     /**
-     System simulation will be started upon subscription and stopped after subscription is disposed.
+     The system simulation will be started upon subscription and stopped after subscription is disposed.
 
      System state is represented as a `State` parameter.
-     Mutations are represented by `Mutation` parameter.
+     Events are represented by the `Event` parameter.
 
-     - parameter initialState: Initial state of the system.
-     - parameter accumulator: Calculates new system state from existing state and a transition mutation (system integrator, reducer).
-     - parameter feedback: Feedback loops that produce mutations depending on current system state.
-     - returns: Current state of the system.
+     - parameter initialState: The initial state of the system.
+     - parameter reduce: Calculates the new system state from the existing state and a transition event (system integrator, reducer).
+     - parameter feedback: The feedback loops that produce events depending on the current system state.
+     - returns: The current state of the system.
      */
-    public static func system<State, Mutation>(
-            initialState: State,
-            reduce: @escaping (State, Mutation) -> State,
-            scheduler: ImmediateSchedulerType,
-            scheduledFeedback: [Feedback<State, Mutation>]
-        ) -> Observable<State> {
+    public static func system<State, Event>(
+        initialState: State,
+        reduce: @escaping (State, Event) -> State,
+        scheduler: ImmediateSchedulerType,
+        feedback: [Feedback<State, Event>]
+    ) -> Observable<State> {
         return Observable<State>.deferred {
             let replaySubject = ReplaySubject<State>.create(bufferSize: 1)
 
             let asyncScheduler = scheduler.async
-            
-            let mutations: Observable<Mutation> = Observable.merge(scheduledFeedback.map { feedback in
-                let state = ObservableSchedulerContext(source: replaySubject.asObservable(), scheduler: asyncScheduler)
-                return feedback(state)
-            })
+
+            let events: Observable<Event> = Observable.merge(
+                feedback.map { feedback in
+                    let state = ObservableSchedulerContext(source: replaySubject.asObservable(), scheduler: asyncScheduler)
+                    return feedback(state)
+                }
+            )
             // This is protection from accidental ignoring of scheduler so
             // reentracy errors can be avoided
             .observeOn(CurrentThreadScheduler.instance)
 
-            return mutations.scan(initialState, accumulator: reduce)
-                .do(onNext: { output in
-                    replaySubject.onNext(output)
-                }, onSubscribed: {
-                    replaySubject.onNext(initialState)
-                })
+            return events.scan(initialState, accumulator: reduce)
+                .do(
+                    onNext: { output in
+                        replaySubject.onNext(output)
+                    }, onSubscribed: {
+                        replaySubject.onNext(initialState)
+                    }
+                )
                 .subscribeOn(scheduler)
                 .startWith(initialState)
                 .observeOn(scheduler)
         }
     }
 
-    public static func system<State, Mutation>(
-            initialState: State,
-            reduce: @escaping (State, Mutation) -> State,
-            scheduler: ImmediateSchedulerType,
-            scheduledFeedback: Feedback<State, Mutation>...
-        ) -> Observable<State> {
-        return system(initialState: initialState, reduce: reduce, scheduler: scheduler, scheduledFeedback: scheduledFeedback)
+    /**
+     The system simulation will be started upon subscription and stopped after subscription is disposed.
+
+     System state is represented as a `State` parameter.
+     Events are represented by the `Event` parameter.
+
+     - parameter initialState: The initial state of the system.
+     - parameter reduce: Calculates the new system state from the existing state and a transition event (system integrator, reducer).
+     - parameter feedback: The feedback loops that produce events depending on the current system state.
+     - returns: The current state of the system.
+     */
+    public static func system<State, Event>(
+        initialState: State,
+        reduce: @escaping (State, Event) -> State,
+        scheduler: ImmediateSchedulerType,
+        feedback: Feedback<State, Event>...
+    ) -> Observable<State> {
+        return system(initialState: initialState, reduce: reduce, scheduler: scheduler, feedback: feedback)
     }
 }
 
-extension SharedSequenceConvertibleType where E == Any, SharingStrategy == DriverSharingStrategy {
+extension SharedSequenceConvertibleType where Element == Any, SharingStrategy == DriverSharingStrategy {
     /// Feedback loop
-    public typealias Feedback<State, Mutation> = (Driver<State>) -> Signal<Mutation>
+    public typealias Feedback<State, Event> = (Driver<State>) -> Signal<Event>
 
     /**
-     System simulation will be started upon subscription and stopped after subscription is disposed.
+     The system simulation will be started upon subscription and stopped after subscription is disposed.
 
      System state is represented as a `State` parameter.
-     Mutations are represented by `Mutation` parameter.
+     Events are represented by the `Event` parameter.
 
-     - parameter initialState: Initial state of the system.
-     - parameter accumulator: Calculates new system state from existing state and a transition mutation (system integrator, reducer).
-     - parameter feedback: Feedback loops that produce mutations depending on current system state.
-     - returns: Current state of the system.
+     - parameter initialState: The initial state of the system.
+     - parameter reduce: Calculates the new system state from the existing state and a transition event (system integrator, reducer).
+     - parameter feedback: The feedback loops that produce events depending on the current system state.
+     - returns: The current state of the system.
      */
-    public static func system<State, Mutation>(
-            initialState: State,
-            reduce: @escaping (State, Mutation) -> State,
-            feedback: [Feedback<State, Mutation>]
-        ) -> Driver<State> {
-        let observableFeedbacks: [(ObservableSchedulerContext<State>) -> Observable<Mutation>] = feedback.map { feedback in
+    public static func system<State, Event>(
+        initialState: State,
+        reduce: @escaping (State, Event) -> State,
+        feedback: [Feedback<State, Event>]
+    ) -> Driver<State> {
+        let observableFeedbacks: [(ObservableSchedulerContext<State>) -> Observable<Event>] = feedback.map { feedback in
             return { sharedSequence in
-                return feedback(sharedSequence.source.asDriver(onErrorDriveWith: Driver<State>.empty()))
+                feedback(sharedSequence.source.asDriver(onErrorDriveWith: Driver<State>.empty()))
                     .asObservable()
             }
         }
-        
+
         return Observable<Any>.system(
-                initialState: initialState,
-                reduce: reduce,
-                scheduler: SharingStrategy.scheduler,
-                scheduledFeedback: observableFeedbacks
-            )
-            .asDriver(onErrorDriveWith: .empty())
+            initialState: initialState,
+            reduce: reduce,
+            scheduler: SharingStrategy.scheduler,
+            feedback: observableFeedbacks
+        )
+        .asDriver(onErrorDriveWith: .empty())
     }
 
-    public static func system<State, Mutation>(
-            initialState: State,
-            reduce: @escaping (State, Mutation) -> State,
-            feedback: Feedback<State, Mutation>...
-        ) -> Driver<State> {
+    /**
+     The system simulation will be started upon subscription and stopped after subscription is disposed.
+
+     System state is represented as a `State` parameter.
+     Events are represented by the `Event` parameter.
+
+     - parameter initialState: The initial state of the system.
+     - parameter reduce: Calculates the new system state from the existing state and a transition event (system integrator, reducer).
+     - parameter feedback: The feedback loops that produce events depending on the current system state.
+     - returns: The current state of the system.
+     */
+    public static func system<State, Event>(
+        initialState: State,
+        reduce: @escaping (State, Event) -> State,
+        feedback: Feedback<State, Event>...
+    ) -> Driver<State> {
         return system(initialState: initialState, reduce: reduce, feedback: feedback)
     }
 }
 
 extension ImmediateSchedulerType {
     var async: ImmediateSchedulerType {
-        // This is a hack because of reentrancy. We need to make sure mutations are being sent async.
+        // This is a hack because of reentrancy. We need to make sure events are being sent async.
         // In case MainScheduler is being used MainScheduler.asyncInstance is used to make sure state is modified async.
         // If there is some unknown scheduler instance (like TestScheduler), just use it.
         return (self as? MainScheduler).map { _ in MainScheduler.asyncInstance } ?? self
     }
 }
-
 
 /// Tuple of observable sequence and corresponding scheduler context on which that observable
 /// sequence receives elements.
@@ -141,7 +166,7 @@ public struct ObservableSchedulerContext<Element>: ObservableType {
         self.scheduler = scheduler
     }
 
-    public func subscribe<O: ObserverType>(_ observer: O) -> Disposable where O.E == E {
-        return self.source.subscribe(observer)
+    public func subscribe<Observer: ObserverType>(_ observer: Observer) -> Disposable where Observer.Element == Element {
+        return source.subscribe(observer)
     }
 }
