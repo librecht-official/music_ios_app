@@ -1,0 +1,5 @@
+xcassets:
+  inputs: MusicApp-iOS/Resources/Assets.xcassets
+  outputs:
+    templateName: swift4
+    output: MusicApp-iOS/Resources/Assets.auto.swift

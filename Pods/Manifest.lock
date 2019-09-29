@@ -1,7 +1,9 @@
 PODS:
   - Alamofire (5.0.0-rc.2)
   - Differentiator (4.0.1)
-  - Kingfisher (5.7.1)
+  - Kingfisher (5.13.1):
+    - Kingfisher/Core (= 5.13.1)
+  - Kingfisher/Core (5.13.1)
   - Layout (0.0.4)
   - Moya/Core (14.0.0-beta.2):
     - Alamofire (= 5.0.0-rc.2)
@@ -13,7 +15,7 @@ PODS:
     - Reusable/View (= 4.1.0)
   - Reusable/Storyboard (4.1.0)
   - Reusable/View (4.1.0)
-  - RxCocoa (5.0.0):
+  - RxCocoa (5.0.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
   - RxDataSources (4.0.1):
@@ -23,12 +25,12 @@ PODS:
   - RxFeedback (3.0.0):
     - RxCocoa (~> 5.0)
     - RxSwift (~> 5.0)
-  - RxOptional (4.0.0):
+  - RxOptional (4.1.0):
     - RxCocoa (~> 5)
     - RxSwift (~> 5)
-  - RxRelay (5.0.0):
+  - RxRelay (5.0.1):
     - RxSwift (~> 5)
-  - RxSwift (5.0.0)
+  - RxSwift (5.0.1)
   - SwiftGen (6.1.0)
 
 DEPENDENCIES:
@@ -44,7 +46,7 @@ DEPENDENCIES:
   - SwiftGen (~> 6.0)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  trunk:
     - Alamofire
     - Differentiator
     - Kingfisher
@@ -76,18 +78,18 @@ CHECKOUT OPTIONS:
 SPEC CHECKSUMS:
   Alamofire: f9450d3c7f6bea2ad62e7a541c3e9b186c7991d6
   Differentiator: 886080237d9f87f322641dedbc5be257061b0602
-  Kingfisher: 176d377ad339113c99ad4980cbae687f807e20fe
+  Kingfisher: f33a848445e33c543620812158dc5d47f6bf90df
   Layout: 9e140270c2913002fba58aa22c9b7e5ad62f1fae
-  Moya: 788e592b92fadb10e30d350ed1a9f75c91eb1368
+  Moya: 7a8ae931077bbdec468215833fddb3e8d0d948ef
   Reusable: 82be188f29d96dc5eff0db7b2393bcc08d2cdd5b
-  RxCocoa: fcf32050ac00d801f34a7f71d5e8e7f23026dcd8
+  RxCocoa: e741b9749968e8a143e2b787f1dfbff2b63d0a5c
   RxDataSources: efee07fa4de48477eca0a4611e6d11e2da9c1114
   RxFeedback: 4260d8dad5bba28b182c0b9ff5bce68c260de183
-  RxOptional: 9904e2219d59260c3c171273d475b2126de187e8
-  RxRelay: 4f7409406a51a55cd88483f21ed898c234d60f18
-  RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
+  RxOptional: b1fcd60856807a564c0215c2184b8d33e7826dc2
+  RxRelay: 89d54507f4fd4d969e6ec1d4bd7f3673640b4640
+  RxSwift: e2dc62b366a3adf6a0be44ba9f405efd4c94e0c4
   SwiftGen: f872ca75cbd17bf7103c17f13dcfa0d9a15667b0
 
-PODFILE CHECKSUM: 93c4aad77113d814b62154b0982847dd6e62e5cc
+PODFILE CHECKSUM: cd31da42e2cd211fe6cb18dd33b27492da4036f6
 
-COCOAPODS: 1.7.5
+COCOAPODS: 1.8.4

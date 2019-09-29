@@ -1,0 +1,4 @@
+29.09.2019. Cocoapods, no modularization
+	App size (Debug): 59.2 MB
+	Cold Build time: 67.6 sec
+	RAM Usage after start: 18 MB (no backend), 24.4 MB (with backend data)

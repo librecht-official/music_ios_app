@@ -1,0 +1,7 @@
+strings:
+  inputs: Core/Localization/en.lproj/Localizable.strings
+  outputs:
+    templateName: structured-swift4
+    output: Core/Localization/L10n.auto.swift
+    params:
+      publicAccess: true

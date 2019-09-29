@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="ExploreView" customModule="MainKit" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="hk5-2W-u2K">
+                    <rect key="frame" x="0.0" y="44" width="414" height="852"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                </tableView>
+                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="FgZ-PT-w2W">
+                    <rect key="frame" x="197" y="438" width="20" height="20"/>
+                </activityIndicatorView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="hk5-2W-u2K" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="0Ls-74-RL5"/>
+                <constraint firstItem="hk5-2W-u2K" firstAttribute="top" secondItem="vUN-kp-3ea" secondAttribute="top" id="68h-6D-XMd"/>
+                <constraint firstItem="FgZ-PT-w2W" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="HDS-00-s1M"/>
+                <constraint firstAttribute="bottom" secondItem="hk5-2W-u2K" secondAttribute="bottom" id="amJ-tN-gqo"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="hk5-2W-u2K" secondAttribute="trailing" id="cvt-hm-dyL"/>
+                <constraint firstItem="FgZ-PT-w2W" firstAttribute="centerX" secondItem="iN0-l3-epB" secondAttribute="centerX" id="zqu-KK-dmN"/>
+            </constraints>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <connections>
+                <outlet property="activityIndicator" destination="FgZ-PT-w2W" id="jmP-H0-SIh"/>
+                <outlet property="tableView" destination="hk5-2W-u2K" id="bFS-cD-vib"/>
+            </connections>
+            <point key="canvasLocation" x="139" y="133"/>
+        </view>
+    </objects>
+</document>
