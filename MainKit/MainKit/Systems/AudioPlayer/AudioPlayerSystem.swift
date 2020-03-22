@@ -112,7 +112,11 @@ public class AppAudioPlayerSystem: AudioPlayerSystem {
             case .pauseCurrentItem:
                 player.pause()
                 
-            case .playCurrentItem:
+            case let .playCurrentItem(startOver):
+                if startOver {
+                    player.pause()
+                    player.seek(to: CMTime.zero)
+                }
                 player.play()
                 
             case let .seek(to: time):

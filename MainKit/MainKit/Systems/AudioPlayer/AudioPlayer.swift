@@ -22,7 +22,7 @@ enum AudioPlayer {
         
         enum NextAction: Equatable {
             case playNewItem(PlayableMusicTrack)
-            case playCurrentItem
+            case playCurrentItem(startOver: Bool)
             case pauseCurrentItem
             case seek(to: TimeInterval)
         }
@@ -73,8 +73,9 @@ enum AudioPlayer {
             
         case .resume:
             if newState.playback != .playing && newState.currentItemIsSet {
+                let startOver = newState.playback == .stopped
                 newState.playback = .playing
-                newState.nextAction = .playCurrentItem
+                newState.nextAction = .playCurrentItem(startOver: startOver)
             } else if newState.currentItemIsSet == false,
                 let (nextIndex, nextItem) = newState.playlist
                     .nextPlayableElement(startingFrom: newState.currentTrackIndex) {
