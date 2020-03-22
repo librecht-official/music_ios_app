@@ -24,7 +24,7 @@ enum AudioPlayer {
             case playNewItem(PlayableMusicTrack)
             case playCurrentItem(startOver: Bool)
             case pauseCurrentItem
-            case seek(to: TimeInterval)
+            case seek(to: TimeInterval, andPlay: Bool)
         }
         var nextAction: NextAction?
     }
@@ -38,7 +38,7 @@ enum AudioPlayer {
         
         // TODO: fastForward, fastBackward
         case seek(to: TimeInterval)
-        case didSeek(to: TimeInterval)
+        case didSeek(to: TimeInterval, andPlay: Bool)
         
         case currentItemIsSet(Bool)
     }
@@ -98,10 +98,13 @@ enum AudioPlayer {
             }
             
         case let .seek(to: time):
-            newState.nextAction = .seek(to: time)
+            newState.nextAction = .seek(to: time, andPlay: newState.playback == .playing)
             
-        case .didSeek(to: _):
+        case let .didSeek(to: _, andPlay):
             newState.nextAction = nil
+            if andPlay {
+                newState.playback = .playing
+            }
             
         case let .currentItemIsSet(isSet):
             newState.currentItemIsSet = isSet

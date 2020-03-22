@@ -159,7 +159,8 @@ final class BottomSheetController {
         runningAnimators.append(transitionAnimator)
     }
     
-    @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {
+    @objc
+    private func handlePan(_ recognizer: UIPanGestureRecognizer) {
         switch recognizer.state {
         case .began:
             animateTransitionIfNeeded(to: currentState.opposite, duration: 0.25)

@@ -24,6 +24,7 @@ internal enum Asset {
     internal static let background = ColorAsset(name: "Colors/background")
     internal static let blackControl = ColorAsset(name: "Colors/blackControl")
     internal static let gray1 = ColorAsset(name: "Colors/gray1")
+    internal static let lightGray1 = ColorAsset(name: "Colors/lightGray1")
     internal static let metalicGray1 = ColorAsset(name: "Colors/metalicGray1")
     internal static let metalicGray2 = ColorAsset(name: "Colors/metalicGray2")
     internal static let shadowGray1 = ColorAsset(name: "Colors/shadowGray1")
@@ -45,6 +46,7 @@ internal enum Asset {
     internal static let musicAlbumPlaceholder195x191 = ImageAsset(name: "Images/musicAlbumPlaceholder_195x191")
     internal static let pause44x44 = ImageAsset(name: "Images/pause_44x44")
     internal static let play44x44 = ImageAsset(name: "Images/play_44x44")
+    internal static let playbackProgressBackground = ImageAsset(name: "Images/playbackProgressBackground")
     internal static let profileStub = ImageAsset(name: "Images/profile_stub")
   }
 }

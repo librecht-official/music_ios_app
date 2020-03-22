@@ -14,3 +14,9 @@ public extension Array {
         return nil
     }
 }
+
+public func build<Value>(_ value: @autoclosure () -> Value, _ config: (inout Value) -> ()) -> Value {
+    var val = value()
+    config(&val)
+    return val
+}

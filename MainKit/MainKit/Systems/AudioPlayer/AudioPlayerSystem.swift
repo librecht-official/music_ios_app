@@ -81,7 +81,7 @@ public class AppAudioPlayerSystem: AudioPlayerSystem {
             let avToCommands = [
                 self.player.rx.currentItemDidPlayToEnd.map { _ in Command.playingItemFinished },
                 self.command.asSignal().map(AudioPlayerSystemCommand.toPlayerCommand),
-                self.didSeekRelay.asSignal().map { Command.didSeek(to: $0) },
+                self.didSeekAndPlay.asSignal().map { Command.didSeek(to: $0, andPlay: $1) },
                 self.player.rx.currentItem.map { Command.currentItemIsSet($0 != nil) }
                     .asSignal(onErrorSignalWith: .never())
             ]
@@ -99,7 +99,7 @@ public class AppAudioPlayerSystem: AudioPlayerSystem {
     
     // MARK: Private
     
-    private var didSeekRelay = PublishRelay<TimeInterval>()
+    private var didSeekAndPlay = PublishRelay<(TimeInterval, Bool)>()
     private var dispatchAction: Binder<AudioPlayer.State.NextAction> {
         return Binder(self) { (system, action) in
             let player = system.player
@@ -119,13 +119,15 @@ public class AppAudioPlayerSystem: AudioPlayerSystem {
                 }
                 player.play()
                 
-            case let .seek(to: time):
+            case let .seek(to: time, andPlay):
                 let t = CMTime(seconds: time, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
                 player.pause()
                 player.seek(to: t, toleranceBefore: .zero, toleranceAfter: .zero) { finished in
                     print("seek to finished: \(finished)")
-                    player.play()
-                    system.didSeekRelay.accept(time)
+                    if andPlay {
+                        player.play()
+                    }
+                    system.didSeekAndPlay.accept((time, andPlay))
                 }
             }
         }

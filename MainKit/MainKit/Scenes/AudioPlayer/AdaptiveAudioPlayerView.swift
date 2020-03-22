@@ -21,8 +21,7 @@ public class AdaptiveAudioPlayerView: UIView {
     private(set) lazy var coverImageView = UIImageView()
     private(set) lazy var smallCoverImageView = UIImageView()
     private(set) lazy var coverMaskView = UIView()
-    // FIXME: seeking backward doesn't work properly. Need to distinct events "sliding begin" and "sliding end". And perfom seeking the other way (Maybe even by replacing AVPlayerItem with the new one)
-    private(set) lazy var slider: UISlider = Slider()
+    private(set) lazy var slider = PlaybackProgressSlider()
     private(set) lazy var sliderBackground = UIImageView()
     private(set) lazy var currentTimeLabel = MUSLabel()
     private(set) lazy var totalTimeLabel = MUSLabel()
@@ -253,14 +252,4 @@ extension AdaptiveAudioPlayerView: AdaptiveAudioPlayerViewType {
         slider.rx.value.asSignal(onErrorSignalWith: .never())
     }
     var playButtonTap: Signal<Void> { playbackControl.playButton.rx.tap.asSignal() }
-}
-
-// MARK: - Slider
-
-private final class Slider: UISlider {
-    override func trackRect(forBounds bounds: CGRect) -> CGRect {
-        var rect = bounds
-        rect.size.height = 28
-        return rect
-    }
 }

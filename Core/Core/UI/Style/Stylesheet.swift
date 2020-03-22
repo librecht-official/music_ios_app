@@ -24,6 +24,7 @@ public protocol ColorStylesheetType {
     var blackControl: Color { get }
     
     var gray1: Color { get }
+    var lightGray1: Color { get }
     
     var primaryTint: Color { get }
     var primaryText: Color { get }
@@ -36,6 +37,7 @@ public protocol ImageStylesheetType {
     var musicAlbumPlaceholderLarge: UIImage { get }
     var minVolume: UIImage { get }
     var maxVolume: UIImage { get }
+    var playbackProgressBackground: UIImage { get }
     
     // TODO: remove
     var profileStub: UIImage { get }

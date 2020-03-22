@@ -12,11 +12,15 @@ open class MUSTableViewCell<View: UIView>: UITableViewCell, Reusable {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.addSubview(v)
+        commonInit()
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
+        commonInit()
+    }
+    
+    private func commonInit() {
         contentView.addSubview(v)
     }
     

@@ -26,6 +26,7 @@ final class ColorStylesheet: ColorStylesheetType {
     let background = Color.background.color
     let blackControl = Color.blackControl.color
     let gray1 = Color.gray1.color
+    let lightGray1 = Color.lightGray1.color
     let metalicGradient = [Color.metalicGray1.color, Color.metalicGray2.color]
     let primaryTint = Color.action1.color
     let primaryText = Color.text1.color
@@ -38,6 +39,8 @@ final class ImageStylesheet: ImageStylesheetType {
     var musicAlbumPlaceholderLarge: UIImage {
         Image.musicAlbumPlaceholder195x191.image
     }
+    
+    var playbackProgressBackground: UIImage { Image.playbackProgressBackground.image }
     
     var minVolume: UIImage { Image.minVolume20x16.image }
     var maxVolume: UIImage { Image.maxVolume20x16.image }
